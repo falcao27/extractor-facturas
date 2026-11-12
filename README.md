@@ -1,6 +1,6 @@
 # 🧾 Extractor de facturas con IA
 
-[![CI](https://github.com/falcao27/-extractor-facturas/actions/workflows/ci.yml/badge.svg)](https://github.com/falcao27/-extractor-facturas/actions/workflows/ci.yml)
+[![CI](https://github.com/falcao27/extractor-facturas/actions/workflows/ci.yml/badge.svg)](https://github.com/falcao27/extractor-facturas/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
