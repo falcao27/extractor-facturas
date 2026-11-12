@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Entornos
+.venv/
+venv/
+.env
+
+# Herramientas
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editores y SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Datos: nunca subir facturas reales
+uploads/
+*.xlsx
+eval/cache/
+
+# Planificación personal
+Roadmap*.pdf
