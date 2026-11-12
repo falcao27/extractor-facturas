@@ -1,0 +1,38 @@
+{
+  "datos": {
+    "numero": "SDL-2026-0152",
+    "fecha_emision": "2026-11-05",
+    "emisor": {
+      "nombre": "Soluciones Digitales Levante S.L.",
+      "nif": "B12345674"
+    },
+    "receptor": {
+      "nombre": "Laura Martín Gómez",
+      "nif": "12345678A"
+    },
+    "lineas": [
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 8,
+        "precio_unitario": 60.0,
+        "importe": 480.0
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 1,
+        "precio_unitario": 350.0,
+        "importe": 350.0
+      }
+    ],
+    "base_imponible": 830.0,
+    "tipo_iva": 21.0,
+    "cuota_iva": 147.3,
+    "retencion_irpf": null,
+    "total": 977.3
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

@@ -20,8 +20,8 @@ from app.export import to_xlsx
 from app.llm_extractor import ExtractionError, extract
 from app.logging_config import request_id_var, setup_logging
 from app.pdf_reader import PdfInvalido, read_pdf
-from app.schemas import Factura, FacturaList, FacturaPatch, FacturaRead
-from app.validators import validar_factura
+from app.schemas import Factura, FacturaList, FacturaPatch, FacturaRead, Paso
+from app.validators import resumen_reglas, validar_factura
 
 setup_logging(settings.log_level)
 logger = logging.getLogger("app")
@@ -88,6 +88,10 @@ class RateLimiter:
 rate_limiter = RateLimiter(settings.rate_limit_per_day)
 
 
+def _ms(inicio: float) -> int:
+    return int((time.perf_counter() - inicio) * 1000)
+
+
 def client_ip(request: Request) -> str:
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
@@ -127,15 +131,33 @@ def health(db: DbSession) -> dict[str, str]:
 async def subir_factura(
     request: Request, db: DbSession, archivo: Annotated[UploadFile, File()]
 ) -> FacturaRead:
+    pasos: list[Paso] = []
+    t = time.perf_counter()
     data = await leer_pdf_subido(archivo)
     rate_limiter.check(client_ip(request))
+    pasos.append(Paso(
+        nombre="Validación del archivo", estado="ok", ms=_ms(t),
+        detalle=f"{archivo.filename} · {len(data) / 1024:.0f} KB · firma %PDF correcta · "
+                f"límite de {settings.max_upload_mb} MB respetado",
+    ))
 
+    t = time.perf_counter()
     try:
         contenido = await run_in_threadpool(read_pdf, data)
     except PdfInvalido as exc:
         raise HTTPException(422, str(exc)) from exc
     finally:
         del data  # el PDF nunca se escribe en disco; solo se guardan los datos extraídos
+    pasos.append(Paso(
+        nombre="Lectura del PDF", estado="ok", ms=_ms(t),
+        detalle=(
+            f"{contenido.paginas} página(s) sin capa de texto → convertidas a imagen PNG "
+            "(PDF escaneado, se envía al modelo con visión)"
+            if contenido.escaneado
+            else f"{contenido.paginas} página(s) · {len(contenido.texto)} caracteres de texto "
+                 "extraídos con pdfplumber (PDF digital)"
+        ),
+    ))
 
     try:
         result = await run_in_threadpool(extract, contenido)
@@ -145,10 +167,36 @@ async def subir_factura(
             extra={"archivo": archivo.filename, "error": str(exc), "causa": repr(exc.__cause__)},
         )
         raise HTTPException(502, f"No se pudo extraer la factura: {exc}") from exc
+    f = result.factura
+    pasos.append(Paso(
+        nombre="Extracción de datos", estado="ok", ms=result.tiempo_ms,
+        detalle=(
+            ("Modo demo: datos de referencia, sin llamar al LLM" if result.modelo == "demo"
+             else f"{result.modelo} con salida estructurada · "
+                  f"{result.tokens_entrada + result.tokens_salida} tokens · "
+                  f"{result.coste_eur:.5f} €")
+            + f" · factura {f.numero} de {f.emisor.nombre} · {len(f.lineas)} línea(s)"
+        ),
+    ))
 
-    avisos = validar_factura(result.factura)
+    t = time.perf_counter()
+    avisos = validar_factura(f)
+    reglas = resumen_reglas(avisos)
+    correctas = sum(r.ok for r in reglas)
+    pasos.append(Paso(
+        nombre="Validación de reglas de negocio", estado="ok" if not avisos else "aviso",
+        ms=_ms(t), detalle=f"{correctas} de {len(reglas)} reglas correctas"
+        + (f" · {len(avisos)} aviso(s) para revisar" if avisos else ""),
+    ))
+
+    t = time.perf_counter()
     row = repository.crear(db, archivo.filename or "factura.pdf", result, avisos,
                            contenido.escaneado)
+    pasos.append(Paso(
+        nombre="Guardado", estado="ok", ms=_ms(t),
+        detalle=f"Factura #{row.id} guardada con estado «{row.estado}» · "
+                "el PDF se descarta (no se almacena)",
+    ))
     logger.info(
         "factura procesada",
         extra={
@@ -161,7 +209,9 @@ async def subir_factura(
             "avisos": len(avisos),
         },
     )
-    return repository.to_read(row)
+    respuesta = repository.to_read(row)
+    respuesta.pasos = pasos
+    return respuesta
 
 
 @app.get("/facturas", response_model=FacturaList, tags=["facturas"])

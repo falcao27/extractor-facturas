@@ -91,15 +91,18 @@ def get_client() -> anthropic.Anthropic:
     return _client
 
 
-DATASET_DIR = Path(__file__).resolve().parents[1] / "eval" / "dataset"
+ROOT_DIR = Path(__file__).resolve().parents[1]
+DATASET_DIR = ROOT_DIR / "eval" / "dataset"
+EJEMPLOS_DIR = ROOT_DIR / "ejemplos"
 
 
 @cache
 def _gabaritos_demo() -> dict[str, Path]:
-    """sha256 del PDF -> JSON de referencia, para las facturas de eval/dataset."""
+    """sha256 del PDF -> JSON de referencia, para las facturas de eval/dataset y ejemplos/."""
     return {
         hashlib.sha256(pdf.read_bytes()).hexdigest(): pdf.with_suffix(".json")
-        for pdf in DATASET_DIR.glob("*.pdf")
+        for carpeta in (DATASET_DIR, EJEMPLOS_DIR)
+        for pdf in carpeta.glob("*.pdf")
         if pdf.with_suffix(".json").exists()
     }
 
@@ -110,7 +113,7 @@ def extract_demo(pdf: PdfContent) -> ExtractionResult:
     gabarito = _gabaritos_demo().get(pdf.sha256)
     if gabarito is None:
         raise ExtractionError(
-            "Modo demo: solo se reconocen las facturas de eval/dataset. "
+            "Modo demo: solo se reconocen las facturas de eval/dataset y ejemplos/. "
             "Configura LLM_PROVIDER=anthropic para extraer cualquier PDF."
         )
     datos = json.loads(gabarito.read_text(encoding="utf-8"))["datos"]

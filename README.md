@@ -9,7 +9,13 @@ Servicio que recibe el PDF de una factura española, extrae los datos con un LLM
 
 **Demo:** _[enlace de Render]_ · **API:** `/docs` (Swagger automático)
 
-<!-- ![Demo](docs/demo.gif) -->
+| Factura con avisos | Tras corregir y confirmar |
+|---|---|
+| ![Factura con avisos](docs/factura_con_avisos.png) | ![Factura revisada](docs/factura_revisada.png) |
+
+La interfaz muestra cada paso del procesamiento (validación del archivo, lectura del PDF,
+extracción, reglas de negocio, guardado y revisión manual) y el resultado con el checklist
+de validaciones.
 
 ## El problema
 
@@ -145,8 +151,8 @@ alembic upgrade head
 uvicorn app.main:app                  # y en otra terminal: streamlit run ui/streamlit_app.py
 ```
 
-Prueba con `factura_010.pdf` (total erróneo) o `factura_007.pdf` (NIF inválido) para ver
-los avisos.
+Prueba con `ejemplos/factura_prueba_con_errores.pdf` (NIF inválido y cuota de IVA mal
+calculada) o `ejemplos/factura_prueba_correcta.pdf`. También están en la barra lateral.
 
 ### Tests y calidad
 

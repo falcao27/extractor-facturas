@@ -1,6 +1,7 @@
-"""Interfaz de demo: subir facturas, revisar avisos, corregir y descargar Excel."""
+"""Interfaz de demo: subir facturas, ver cómo se procesan, revisar avisos, corregir y exportar."""
 
 import os
+import time
 from datetime import date
 from pathlib import Path
 
@@ -8,10 +9,23 @@ import httpx
 import streamlit as st
 
 API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
-EJEMPLO = Path(__file__).resolve().parents[1] / "eval" / "dataset" / "factura_010.pdf"
+EJEMPLOS = Path(__file__).resolve().parents[1] / "ejemplos"
+EJEMPLO = EJEMPLOS / "factura_prueba_con_errores.pdf"
 TIMEOUT = httpx.Timeout(120.0, connect=10.0)
+ICONO_PASO = {"ok": "✅", "aviso": "⚠️", "error": "❌"}
+ESTADOS = {
+    "procesada": ("green", "Procesada"),
+    "con_avisos": ("orange", "Con avisos"),
+    "revisada": ("blue", "Revisada"),
+    "error": ("red", "Error"),
+}
 
 st.set_page_config(page_title="Extractor de facturas con IA", page_icon="🧾", layout="wide")
+
+
+def eur(valor: float | None) -> str:
+    entero, dec = f"{valor or 0:,.2f}".split(".")
+    return f"{entero.replace(',', '.')},{dec} €"
 
 
 def api(method: str, path: str, **kwargs) -> httpx.Response | None:
@@ -22,59 +36,115 @@ def api(method: str, path: str, **kwargs) -> httpx.Response | None:
                  "~1 minuto en despertar: inténtalo de nuevo.")
         return None
     if r.status_code >= 400:
-        detalle = r.json().get("detail", r.text) if "json" in r.headers.get("content-type", "") \
-            else r.text
-        st.error(f"Error {r.status_code}: {detalle}")
+        es_json = "json" in r.headers.get("content-type", "")
+        st.error(f"Error {r.status_code}: {r.json().get('detail', r.text) if es_json else r.text}")
         return None
     return r
 
 
 def procesar(nombre: str, contenido: bytes) -> None:
-    with st.spinner(f"Extrayendo {nombre}..."):
+    with st.spinner(f"Procesando {nombre}..."):
         r = api("POST", "/facturas", files={"archivo": (nombre, contenido, "application/pdf")})
     if r is not None:
-        st.session_state.setdefault("procesadas", []).insert(0, r.json())
+        factura = r.json()
+        st.session_state.setdefault("procesadas", []).insert(0, factura)
+        st.session_state.setdefault("por_animar", set()).add(factura["id"])
 
 
-def avisos_de(factura: dict, prefijo: str) -> list[str]:
-    return [a["mensaje"] for a in factura["avisos"] if a["campo"].startswith(prefijo)]
+def mostrar_pasos(factura: dict) -> None:
+    """Línea de tiempo de lo que hizo el sistema con el PDF."""
+    pasos = factura.get("pasos") or []
+    if not pasos:
+        return
+    animar = factura["id"] in st.session_state.get("por_animar", set())
+    total_ms = sum(p["ms"] for p in pasos)
+    conclusion = {
+        "procesada": "todo correcto",
+        "con_avisos": "requiere revisión",
+        "revisada": "revisada y confirmada por el usuario",
+    }.get(factura["estado"], factura["estado"])
+
+    with st.status("Procesando la factura...", expanded=True) as estado:
+        for i, paso in enumerate(pasos, start=1):
+            if animar:
+                time.sleep(0.4)
+            st.markdown(
+                f"{ICONO_PASO.get(paso['estado'], '•')} **{i}. {paso['nombre']}** "
+                f"<span style='color:gray'>· {paso['ms']} ms</span><br>"
+                f"<span style='color:gray;font-size:0.9em'>{paso['detalle']}</span>",
+                unsafe_allow_html=True,
+            )
+        estado.update(
+            label=f"Procesada en {total_ms / 1000:.2f} s · {conclusion}",
+            state="complete",
+            expanded=True,
+        )
+    st.session_state.get("por_animar", set()).discard(factura["id"])
 
 
-def campo_con_aviso(factura: dict, prefijo: str) -> None:
-    for mensaje in avisos_de(factura, prefijo):
-        st.warning(mensaje, icon="⚠️")
+def mostrar_resultado(factura: dict) -> None:
+    d = factura["datos"]
+    color, texto = ESTADOS.get(factura["estado"], ("gray", factura["estado"]))
+    st.markdown(f"### Resultado · :{color}-background[{texto}]")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+    fecha = date.fromisoformat(d["fecha_emision"]).strftime("%d/%m/%Y")
+    c1.markdown(f"<small style='color:gray'>Factura · {fecha}</small><br>"
+                f"<span style='font-size:1.25em;font-weight:600'>{d['numero']}</span>",
+                unsafe_allow_html=True)
+    c2.metric("Base imponible", eur(d["base_imponible"]))
+    c3.metric(f"IVA {d['tipo_iva']:g} %", eur(d["cuota_iva"]))
+    c4.metric("Retención IRPF", eur(d["retencion_irpf"]) if d["retencion_irpf"] else "—")
+    c5.metric("Total a pagar", eur(d["total"]))
+
+    c1, c2 = st.columns(2)
+    c1.markdown(f"**Emisor**  \n{d['emisor']['nombre']}  \n`{d['emisor']['nif']}`")
+    c2.markdown(f"**Receptor**  \n{d['receptor']['nombre']}  \n`{d['receptor']['nif']}`")
+
+    st.dataframe(
+        [
+            {"Descripción": linea["descripcion"], "Cantidad": linea["cantidad"],
+             "Precio unitario": eur(linea["precio_unitario"]), "Importe": eur(linea["importe"])}
+            for linea in d["lineas"]
+        ],
+        use_container_width=True, hide_index=True,
+    )
+
+    reglas = factura.get("reglas") or []
+    if reglas:
+        correctas = sum(r["ok"] for r in reglas)
+        st.markdown(f"**Validaciones: {correctas} de {len(reglas)} correctas**")
+        cols = st.columns(2)
+        for i, regla in enumerate(reglas):
+            with cols[i % 2]:
+                if regla["ok"]:
+                    st.markdown(f"✅ {regla['nombre']}")
+                else:
+                    st.warning(f"**{regla['nombre']}**  \n{regla['detalle']}", icon="⚠️")
+
+    st.caption(
+        f"{factura['archivo']} · modelo {factura['modelo']} · "
+        f"{factura['tokens_entrada'] + factura['tokens_salida']} tokens · "
+        f"coste {factura['coste_eur']:.5f} € · {factura['tiempo_ms']} ms"
+        + (" · escaneada" if factura["escaneada"] else "")
+    )
 
 
 def formulario(factura: dict) -> None:
     d = factura["datos"]
     fid = factura["id"]
-    estado = factura["estado"]
-    color = {"procesada": "green", "con_avisos": "orange", "revisada": "blue"}.get(estado, "red")
-    st.markdown(
-        f"#### {factura['archivo']} · :{color}[{estado.replace('_', ' ')}]  \n"
-        f"<small>{factura['modelo']} · {factura['tiempo_ms'] / 1000:.1f} s · "
-        f"{factura['tokens_entrada'] + factura['tokens_salida']} tokens · "
-        f"{factura['coste_eur']:.5f} €{' · escaneada' if factura['escaneada'] else ''}</small>",
-        unsafe_allow_html=True,
-    )
-
     with st.form(f"form_{fid}"):
         c1, c2 = st.columns(2)
         numero = c1.text_input("Número", d["numero"], key=f"num_{fid}")
         fecha = c2.date_input("Fecha de emisión", date.fromisoformat(d["fecha_emision"]),
                               format="DD/MM/YYYY", key=f"fecha_{fid}")
-        campo_con_aviso(factura, "fecha_emision")
-
         c1, c2 = st.columns(2)
         emisor_nombre = c1.text_input("Emisor", d["emisor"]["nombre"], key=f"en_{fid}")
         emisor_nif = c2.text_input("NIF emisor", d["emisor"]["nif"], key=f"enif_{fid}")
-        campo_con_aviso(factura, "emisor")
         c1, c2 = st.columns(2)
         receptor_nombre = c1.text_input("Receptor", d["receptor"]["nombre"], key=f"rn_{fid}")
         receptor_nif = c2.text_input("NIF receptor", d["receptor"]["nif"], key=f"rnif_{fid}")
-        campo_con_aviso(factura, "receptor")
 
-        st.markdown("**Líneas**")
         lineas = st.data_editor(
             d["lineas"], num_rows="dynamic", use_container_width=True, key=f"lineas_{fid}",
             column_config={
@@ -85,26 +155,23 @@ def formulario(factura: dict) -> None:
                 "importe": st.column_config.NumberColumn("Importe", format="%.2f €"),
             },
         )
-        campo_con_aviso(factura, "lineas")
 
+        tipos = [21.0, 10.0, 4.0, 0.0]
         c1, c2, c3, c4, c5 = st.columns(5)
         base = c1.number_input("Base imponible", value=d["base_imponible"], format="%.2f",
                                key=f"base_{fid}")
-        tipo = c2.selectbox("Tipo IVA %", [21.0, 10.0, 4.0, 0.0],
-                            index=[21.0, 10.0, 4.0, 0.0].index(d["tipo_iva"])
-                            if d["tipo_iva"] in (21.0, 10.0, 4.0, 0.0) else 0,
+        tipo = c2.selectbox("Tipo IVA %", tipos,
+                            index=tipos.index(d["tipo_iva"]) if d["tipo_iva"] in tipos else 0,
                             key=f"tipo_{fid}")
         cuota = c3.number_input("Cuota IVA", value=d["cuota_iva"], format="%.2f",
                                 key=f"cuota_{fid}")
         irpf = c4.number_input("Retención IRPF", value=d["retencion_irpf"] or 0.0,
                                format="%.2f", key=f"irpf_{fid}")
         total = c5.number_input("Total", value=d["total"], format="%.2f", key=f"total_{fid}")
-        for prefijo in ("base_imponible", "tipo_iva", "cuota_iva", "total"):
-            campo_con_aviso(factura, prefijo)
 
         c1, c2 = st.columns(2)
-        guardar = c1.form_submit_button("Guardar corrección")
-        confirmar = c2.form_submit_button("Confirmar ✅", type="primary")
+        guardar = c1.form_submit_button("Guardar corrección (revalida)")
+        confirmar = c2.form_submit_button("Confirmar factura ✅", type="primary")
 
     if guardar or confirmar:
         cambios = {
@@ -122,43 +189,68 @@ def formulario(factura: dict) -> None:
         }
         r = api("PATCH", f"/facturas/{fid}", json=cambios)
         if r is not None:
+            nueva = r.json()
+            correctas = sum(regla["ok"] for regla in nueva["reglas"])
+            revision = {
+                "nombre": "Revisión manual",
+                "estado": "ok" if not nueva["avisos"] else "aviso",
+                "ms": 0,
+                "detalle": f"{'Confirmada' if confirmar else 'Corregida'} por el usuario · "
+                f"revalidada: {correctas} de {len(nueva['reglas'])} reglas correctas",
+            }
+            nueva["pasos"] = factura.get("pasos", []) + [revision]
             procesadas = st.session_state["procesadas"]
-            procesadas[:] = [r.json() if f["id"] == fid else f for f in procesadas]
-            st.success("Factura revisada" if confirmar else "Corrección guardada")
+            procesadas[:] = [nueva if f["id"] == fid else f for f in procesadas]
+            st.toast("Factura confirmada" if confirmar else "Corrección guardada y revalidada")
             st.rerun()
 
 
+with st.sidebar:
+    st.header("🧪 Facturas de prueba")
+    st.caption("Descárgalas y súbelas, o usa el botón de ejemplo.")
+    for pdf in sorted(EJEMPLOS.glob("*.pdf")):
+        st.download_button(pdf.stem.replace("_", " ").capitalize(), pdf.read_bytes(),
+                           file_name=pdf.name, mime="application/pdf",
+                           use_container_width=True)
+
 st.title("🧾 Extractor de facturas con IA")
 st.caption(
-    "Sube facturas españolas en PDF: Claude extrae los datos, las reglas validan NIF/CIF, "
-    "IVA, IRPF y totales, y puedes descargarlo todo en Excel. "
-    "Los PDF no se guardan; usa solo facturas de prueba."
+    "Sube facturas españolas en PDF: se extraen los datos, se validan NIF/CIF, IVA, IRPF y "
+    "totales, y puedes corregirlas y descargarlas en Excel. Los PDF no se guardan."
 )
 
 salud = api("GET", "/health")
 if salud is not None and salud.json().get("llm_provider") == "demo":
     st.info(
-        "**Modo demo (sin LLM, sin coste):** se reconocen las 30 facturas de `eval/dataset` y "
-        "se devuelven sus datos de referencia. Validaciones, avisos, correcciones y Excel "
-        "funcionan igual que con Claude.",
+        "**Modo demo (sin LLM, sin coste):** se reconocen las facturas de prueba y las 30 de "
+        "`eval/dataset`. Validaciones, avisos, correcciones y Excel funcionan igual que con "
+        "Claude.",
         icon="🧪",
     )
 
 tab_subir, tab_historial = st.tabs(["Subir facturas", "Historial"])
 
 with tab_subir:
+    # Cambiar la key vacía el selector tras procesar, para no repetir archivos
+    st.session_state.setdefault("uploader", 0)
     archivos = st.file_uploader("PDF de facturas (máx. 5 MB cada uno)", type=["pdf"],
-                                accept_multiple_files=True)
-    c1, c2 = st.columns([1, 1])
+                                accept_multiple_files=True,
+                                key=f"uploader_{st.session_state['uploader']}")
+    c1, c2, _ = st.columns([1, 1.3, 3])
     if c1.button("Procesar", type="primary", disabled=not archivos):
         for archivo in archivos:
             procesar(archivo.name, archivo.getvalue())
+        st.session_state["uploader"] += 1
+        st.rerun()
     if c2.button("Probar con factura de ejemplo", disabled=not EJEMPLO.exists()):
-        procesar("factura_de_ejemplo.pdf", EJEMPLO.read_bytes())
+        procesar(EJEMPLO.name, EJEMPLO.read_bytes())
 
     for factura in st.session_state.get("procesadas", []):
         with st.container(border=True):
-            formulario(factura)
+            mostrar_pasos(factura)
+            mostrar_resultado(factura)
+            with st.expander("✏️ Revisar y corregir", expanded=bool(factura["avisos"])):
+                formulario(factura)
 
 with tab_historial:
     c1, c2, c3 = st.columns(3)
@@ -177,7 +269,8 @@ with tab_historial:
                 {
                     "ID": f["id"], "Número": f["datos"]["numero"],
                     "Fecha": f["datos"]["fecha_emision"], "Emisor": f["datos"]["emisor"]["nombre"],
-                    "Total (€)": f["datos"]["total"], "Estado": f["estado"],
+                    "Total": eur(f["datos"]["total"]),
+                    "Estado": ESTADOS.get(f["estado"], ("", f["estado"]))[1],
                     "Avisos": len(f["avisos"]),
                 }
                 for f in data["items"]

@@ -4,7 +4,7 @@ import re
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
-from app.schemas import Aviso, Factura, Severidad
+from app.schemas import Aviso, Factura, ReglaResultado, Severidad
 
 LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE"
 LETRAS_CIF = "ABCDEFGHJNPQRSUVW"
@@ -12,6 +12,32 @@ CONTROL_CIF_LETRA = "JABCDEFGHI"
 TIPOS_IVA = {Decimal(21), Decimal(10), Decimal(4), Decimal(0)}
 TOLERANCIA = Decimal("0.02")
 CENT = Decimal("0.01")
+
+
+# Regla visible -> campos de aviso que la incumplen ("x[" = prefijo, resto = exacto)
+REGLAS: list[tuple[str, tuple[str, ...]]] = [
+    ("NIF/CIF del emisor válido", ("emisor.nif",)),
+    ("NIF/CIF del receptor válido", ("receptor.nif",)),
+    ("Cada línea: cantidad × precio = importe", ("lineas[",)),
+    ("Suma de líneas = base imponible", ("base_imponible", "lineas")),
+    ("Tipo de IVA permitido (21, 10, 4 o 0 %)", ("tipo_iva",)),
+    ("Base × tipo de IVA = cuota de IVA", ("cuota_iva",)),
+    ("Base + IVA − IRPF = total", ("total",)),
+    ("Fecha de emisión no futura", ("fecha_emision",)),
+]
+
+
+def _coincide(campo: str, claves: tuple[str, ...]) -> bool:
+    return any(campo.startswith(c) if c.endswith("[") else campo == c for c in claves)
+
+
+def resumen_reglas(avisos: list[Aviso]) -> list[ReglaResultado]:
+    """Checklist de todas las reglas comprobadas, a partir de los avisos generados."""
+    resultado = []
+    for nombre, claves in REGLAS:
+        fallos = [a.mensaje for a in avisos if _coincide(a.campo, claves)]
+        resultado.append(ReglaResultado(nombre=nombre, ok=not fallos, detalle="; ".join(fallos)))
+    return resultado
 
 
 def normalizar_nif(doc: str) -> str:
@@ -56,6 +82,10 @@ def _eur(value: Decimal) -> str:
     return f"{value:.2f} €"
 
 
+def _pct(value: Decimal) -> str:
+    return f"{value:f}".rstrip("0").rstrip(".") if "." in f"{value:f}" else f"{value:f}"
+
+
 def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
     hoy = hoy or date.today()
     avisos: list[Aviso] = []
@@ -93,14 +123,17 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
         avisos.append(Aviso(campo="lineas", mensaje="La factura no tiene líneas de detalle"))
 
     if tipo not in TIPOS_IVA:
-        avisos.append(Aviso(campo="tipo_iva", mensaje=f"Tipo de IVA no habitual: {tipo}%"))
+        avisos.append(
+            Aviso(campo="tipo_iva", mensaje=f"Tipo de IVA no habitual: {_pct(tipo)} %")
+        )
 
     cuota_esperada = (base * tipo / 100).quantize(CENT, rounding=ROUND_HALF_UP)
     if abs(cuota_esperada - cuota) > TOLERANCIA:
         avisos.append(
             Aviso(
                 campo="cuota_iva",
-                mensaje=f"Base × {tipo}% = {_eur(cuota_esperada)}, pero la cuota es {_eur(cuota)}",
+                mensaje=f"Base × {_pct(tipo)} % = {_eur(cuota_esperada)}, pero la cuota es "
+                f"{_eur(cuota)}",
             )
         )
 

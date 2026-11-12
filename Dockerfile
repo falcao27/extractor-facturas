@@ -16,7 +16,7 @@ COPY app app
 COPY alembic alembic
 COPY alembic.ini .
 COPY ui ui
-COPY eval/dataset/factura_010.pdf eval/dataset/factura_010.json eval/dataset/
+COPY ejemplos ejemplos
 
 RUN useradd --create-home appuser
 USER appuser

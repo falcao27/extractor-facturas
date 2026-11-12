@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.llm_extractor import ExtractionResult
 from app.models import FacturaDB, LineaFacturaDB
 from app.schemas import Aviso, Empresa, Estado, Factura, FacturaRead, LineaFactura
+from app.validators import resumen_reglas
 
 
 def _estado(avisos: list[Aviso]) -> Estado:
@@ -62,11 +63,13 @@ def to_factura(row: FacturaDB) -> Factura:
 
 
 def to_read(row: FacturaDB) -> FacturaRead:
+    avisos = [Aviso.model_validate(a) for a in row.avisos or []]
     return FacturaRead(
         id=row.id,
         estado=Estado(row.estado),
         datos=to_factura(row),
-        avisos=[Aviso.model_validate(a) for a in row.avisos or []],
+        avisos=avisos,
+        reglas=resumen_reglas(avisos),
         archivo=row.archivo,
         modelo=row.modelo,
         tokens_entrada=row.tokens_entrada,

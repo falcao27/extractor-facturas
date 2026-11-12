@@ -58,6 +58,21 @@ class Aviso(BaseModel):
     severidad: Severidad = Severidad.aviso
 
 
+class Paso(BaseModel):
+    """Una etapa del procesamiento, para mostrar al usuario qué hizo el sistema."""
+
+    nombre: str
+    estado: str = Field(description="ok, aviso o error")
+    detalle: str
+    ms: int = 0
+
+
+class ReglaResultado(BaseModel):
+    nombre: str
+    ok: bool
+    detalle: str = ""
+
+
 class Estado(StrEnum):
     procesada = "procesada"
     con_avisos = "con_avisos"
@@ -82,6 +97,8 @@ class FacturaRead(BaseModel):
     tiempo_ms: int
     escaneada: bool
     creada_en: datetime
+    reglas: list[ReglaResultado] = []
+    pasos: list[Paso] = Field(default=[], description="Trazabilidad; solo en la respuesta del POST")
 
 
 class FacturaPatch(BaseModel):

@@ -10,4 +10,4 @@ htmlcov
 eval/cache
 tests
 **/*.pdf
-!eval/dataset/factura_010.pdf
+!ejemplos/*.pdf

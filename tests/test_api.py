@@ -21,6 +21,32 @@ def test_subir_factura(client, pdf_bytes):
     assert body["escaneada"] is False
     assert "F2026-0001" in client.extract_calls[0].texto
 
+    pasos = body["pasos"]
+    assert [p["nombre"] for p in pasos] == [
+        "Validación del archivo", "Lectura del PDF", "Extracción de datos",
+        "Validación de reglas de negocio", "Guardado",
+    ]
+    assert all(p["estado"] == "ok" for p in pasos)
+    assert "PDF digital" in pasos[1]["detalle"]
+    assert len(body["reglas"]) == 8 and all(r["ok"] for r in body["reglas"])
+
+
+def test_pasos_y_reglas_con_avisos(client, pdf_bytes, monkeypatch, factura):
+    from app.llm_extractor import ExtractionResult
+
+    mala = factura.model_copy(update={"total": 900.0})
+    monkeypatch.setattr(main, "extract", lambda c, model=None: ExtractionResult(
+        factura=mala, modelo="demo", tokens_entrada=0, tokens_salida=0, coste_eur=0,
+        tiempo_ms=1))
+    body = subir(client, pdf_bytes).json()
+    assert body["estado"] == "con_avisos"
+    assert body["pasos"][3]["estado"] == "aviso"
+    assert "7 de 8" in body["pasos"][3]["detalle"]
+    falladas = [r for r in body["reglas"] if not r["ok"]]
+    assert [r["nombre"] for r in falladas] == ["Base + IVA − IRPF = total"]
+    assert "900.00" in falladas[0]["detalle"]
+    assert client.get(f"/facturas/{body['id']}").json()["pasos"] == []
+
 
 def test_rechaza_no_pdf(client):
     r = subir(client, b"hola", nombre="nota.txt", tipo="text/plain")

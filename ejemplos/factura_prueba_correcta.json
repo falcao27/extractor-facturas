@@ -1,0 +1,44 @@
+{
+  "datos": {
+    "numero": "SDL-2026-0147",
+    "fecha_emision": "2026-10-28",
+    "emisor": {
+      "nombre": "Soluciones Digitales Levante S.L.",
+      "nif": "B12345674"
+    },
+    "receptor": {
+      "nombre": "Panadería Hermanos Ruiz S.A.",
+      "nif": "A58818501"
+    },
+    "lineas": [
+      {
+        "descripcion": "Desarrollo de tienda online",
+        "cantidad": 1,
+        "precio_unitario": 2400.0,
+        "importe": 2400.0
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 6,
+        "precio_unitario": 85.5,
+        "importe": 513.0
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 12,
+        "precio_unitario": 9.95,
+        "importe": 119.4
+      }
+    ],
+    "base_imponible": 3032.4,
+    "tipo_iva": 21.0,
+    "cuota_iva": 636.8,
+    "retencion_irpf": 454.86,
+    "total": 3214.34
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}
