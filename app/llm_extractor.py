@@ -109,6 +109,8 @@ def extract(pdf: PdfContent, model: str | None = None) -> ExtractionResult:
             raise ExtractionError(f"Error de la API del LLM ({exc.status_code})") from exc
         except anthropic.APIConnectionError as exc:
             raise ExtractionError("No se pudo conectar con la API del LLM") from exc
+        except anthropic.AnthropicError as exc:  # p. ej. falta ANTHROPIC_API_KEY
+            raise ExtractionError(f"API del LLM no configurada: {type(exc).__name__}") from exc
         except ValidationError as exc:
             last_error = exc
             logger.warning("respuesta inválida del LLM", extra={"intento": attempt + 1})

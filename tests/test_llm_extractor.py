@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+import anthropic
 import pytest
 
 from app import llm_extractor
@@ -56,6 +57,29 @@ def test_extract_falla_tras_reintentos(fake_client):
     fake_client(*[respuesta(None, "refusal")] * 3)
     with pytest.raises(ExtractionError):
         extract(PdfContent(texto="FACTURA ..."))
+
+
+def test_extract_sin_credenciales_da_error_controlado(monkeypatch):
+    class SinCredenciales:
+        def parse(self, **kwargs):
+            raise anthropic.AnthropicError("Credentials file not found")
+
+    monkeypatch.setattr(llm_extractor, "get_client",
+                        lambda: SimpleNamespace(messages=SinCredenciales()))
+    with pytest.raises(ExtractionError, match="no configurada"):
+        extract(PdfContent(texto="FACTURA ..."))
+
+
+def test_api_devuelve_502_si_falla_el_llm(client, pdf_bytes, monkeypatch):
+    from app import main
+
+    def falla(*args, **kwargs):
+        raise ExtractionError("API del LLM no configurada")
+
+    monkeypatch.setattr(main, "extract", falla)
+    r = client.post("/facturas", files={"archivo": ("f.pdf", pdf_bytes, "application/pdf")})
+    assert r.status_code == 502
+    assert "no configurada" in r.json()["detail"]
 
 
 def test_build_content_texto_e_imagen():

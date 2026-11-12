@@ -1,0 +1,13 @@
+.venv
+.git
+.github
+.env
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+eval/cache
+tests
+**/*.pdf
+!eval/dataset/factura_010.pdf

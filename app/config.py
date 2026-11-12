@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +13,15 @@ class Settings(BaseSettings):
     max_upload_mb: int = 5
     rate_limit_per_day: int = 20
     log_level: str = "INFO"
+
+    @field_validator("database_url")
+    @classmethod
+    def usar_driver_psycopg(cls, url: str) -> str:
+        # Render y Heroku entregan postgres:// o postgresql:// sin driver
+        for prefijo in ("postgres://", "postgresql://"):
+            if url.startswith(prefijo):
+                return "postgresql+psycopg://" + url.removeprefix(prefijo)
+        return url
 
 
 settings = Settings()
