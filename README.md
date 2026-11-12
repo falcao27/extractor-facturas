@@ -133,6 +133,21 @@ uvicorn app.main:app --reload
 streamlit run ui/streamlit_app.py     # en otra terminal
 ```
 
+### Modo demo (sin clave ni créditos)
+
+Con `LLM_PROVIDER=demo` no se llama al LLM: la API reconoce las 30 facturas de
+`eval/dataset` por su hash y devuelve los datos de referencia. Todo lo demás es real:
+lectura del PDF, validaciones, avisos, base de datos, corrección y Excel.
+
+```powershell
+$env:LLM_PROVIDER="demo"; $env:DATABASE_URL="sqlite:///local.db"
+alembic upgrade head
+uvicorn app.main:app                  # y en otra terminal: streamlit run ui/streamlit_app.py
+```
+
+Prueba con `factura_010.pdf` (total erróneo) o `factura_007.pdf` (NIF inválido) para ver
+los avisos.
+
 ### Tests y calidad
 
 ```bash

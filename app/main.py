@@ -116,7 +116,11 @@ def health(db: DbSession) -> dict[str, str]:
     except Exception:
         logger.exception("health: base de datos no disponible")
         database = "error"
-    return {"status": "ok" if database == "ok" else "degraded", "database": database}
+    return {
+        "status": "ok" if database == "ok" else "degraded",
+        "database": database,
+        "llm_provider": settings.llm_provider,
+    }
 
 
 @app.post("/facturas", response_model=FacturaRead, status_code=201, tags=["facturas"])
@@ -136,7 +140,10 @@ async def subir_factura(
     try:
         result = await run_in_threadpool(extract, contenido)
     except ExtractionError as exc:
-        logger.error("extracción fallida", extra={"archivo": archivo.filename, "error": str(exc)})
+        logger.error(
+            "extracción fallida",
+            extra={"archivo": archivo.filename, "error": str(exc), "causa": repr(exc.__cause__)},
+        )
         raise HTTPException(502, f"No se pudo extraer la factura: {exc}") from exc
 
     avisos = validar_factura(result.factura)

@@ -1,9 +1,13 @@
 """Extracción con Claude usando salida estructurada (JSON garantizado con el esquema Factura)."""
 
 import base64
+import hashlib
+import json
 import logging
 import time
 from dataclasses import dataclass
+from functools import cache
+from pathlib import Path
 
 import anthropic
 from pydantic import ValidationError
@@ -87,7 +91,42 @@ def get_client() -> anthropic.Anthropic:
     return _client
 
 
+DATASET_DIR = Path(__file__).resolve().parents[1] / "eval" / "dataset"
+
+
+@cache
+def _gabaritos_demo() -> dict[str, Path]:
+    """sha256 del PDF -> JSON de referencia, para las facturas de eval/dataset."""
+    return {
+        hashlib.sha256(pdf.read_bytes()).hexdigest(): pdf.with_suffix(".json")
+        for pdf in DATASET_DIR.glob("*.pdf")
+        if pdf.with_suffix(".json").exists()
+    }
+
+
+def extract_demo(pdf: PdfContent) -> ExtractionResult:
+    """Modo sin LLM: reconoce las facturas del dataset y devuelve su gabarito."""
+    start = time.perf_counter()
+    gabarito = _gabaritos_demo().get(pdf.sha256)
+    if gabarito is None:
+        raise ExtractionError(
+            "Modo demo: solo se reconocen las facturas de eval/dataset. "
+            "Configura LLM_PROVIDER=anthropic para extraer cualquier PDF."
+        )
+    datos = json.loads(gabarito.read_text(encoding="utf-8"))["datos"]
+    return ExtractionResult(
+        factura=Factura.model_validate(datos),
+        modelo="demo",
+        tokens_entrada=0,
+        tokens_salida=0,
+        coste_eur=0.0,
+        tiempo_ms=int((time.perf_counter() - start) * 1000),
+    )
+
+
 def extract(pdf: PdfContent, model: str | None = None) -> ExtractionResult:
+    if settings.llm_provider == "demo":
+        return extract_demo(pdf)
     model = model or settings.llm_model
     client = get_client()
     content = build_content(pdf)

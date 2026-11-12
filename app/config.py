@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    # "anthropic" llama a Claude; "demo" usa los gabaritos de eval/dataset sin gastar créditos
+    llm_provider: str = "anthropic"
     anthropic_api_key: str = ""
     llm_model: str = "claude-haiku-5-5"
     llm_timeout_s: float = 60.0

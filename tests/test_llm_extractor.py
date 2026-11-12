@@ -82,6 +82,28 @@ def test_api_devuelve_502_si_falla_el_llm(client, pdf_bytes, monkeypatch):
     assert "no configurada" in r.json()["detail"]
 
 
+def test_modo_demo_reconoce_dataset_sin_llamar_al_llm(monkeypatch):
+    import json
+
+    from app.pdf_reader import read_pdf
+
+    monkeypatch.setattr(llm_extractor.settings, "llm_provider", "demo")
+    monkeypatch.setattr(llm_extractor, "get_client", lambda: pytest.fail("no debe llamar al LLM"))
+    pdf = llm_extractor.DATASET_DIR / "factura_004.pdf"  # escaneada
+    result = extract(read_pdf(pdf))
+    esperado = json.loads(pdf.with_suffix(".json").read_text(encoding="utf-8"))["datos"]
+    assert result.factura.total == esperado["total"]
+    assert (result.modelo, result.coste_eur) == ("demo", 0.0)
+
+
+def test_modo_demo_rechaza_pdf_desconocido(monkeypatch, pdf_bytes):
+    from app.pdf_reader import read_pdf
+
+    monkeypatch.setattr(llm_extractor.settings, "llm_provider", "demo")
+    with pytest.raises(ExtractionError, match="Modo demo"):
+        extract(read_pdf(pdf_bytes))
+
+
 def test_build_content_texto_e_imagen():
     texto = build_content(PdfContent(texto="hola"))
     assert texto[0]["type"] == "text" and "hola" in texto[0]["text"]

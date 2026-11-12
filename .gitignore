@@ -29,3 +29,6 @@ eval/cache/
 
 # Planificación personal
 Roadmap*.pdf
+
+# Base SQLite para desarrollo local
+local.db

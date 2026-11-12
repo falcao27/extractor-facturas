@@ -135,6 +135,15 @@ st.caption(
     "Los PDF no se guardan; usa solo facturas de prueba."
 )
 
+salud = api("GET", "/health")
+if salud is not None and salud.json().get("llm_provider") == "demo":
+    st.info(
+        "**Modo demo (sin LLM, sin coste):** se reconocen las 30 facturas de `eval/dataset` y "
+        "se devuelven sus datos de referencia. Validaciones, avisos, correcciones y Excel "
+        "funcionan igual que con Claude.",
+        icon="🧪",
+    )
+
 tab_subir, tab_historial = st.tabs(["Subir facturas", "Historial"])
 
 with tab_subir:
