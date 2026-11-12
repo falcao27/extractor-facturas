@@ -113,8 +113,8 @@ def extract_demo(pdf: PdfContent) -> ExtractionResult:
     gabarito = _gabaritos_demo().get(pdf.sha256)
     if gabarito is None:
         raise ExtractionError(
-            "Modo demo: solo se reconocen las facturas de eval/dataset y ejemplos/. "
-            "Configura LLM_PROVIDER=anthropic para extraer cualquier PDF."
+            "Modo demo: só são reconhecidas as faturas de eval/dataset e ejemplos/. "
+            "Configure LLM_PROVIDER=anthropic para extrair qualquer PDF."
         )
     datos = json.loads(gabarito.read_text(encoding="utf-8"))["datos"]
     return ExtractionResult(
@@ -148,11 +148,11 @@ def extract(pdf: PdfContent, model: str | None = None) -> ExtractionResult:
                 output_format=Factura,
             )
         except anthropic.APIStatusError as exc:
-            raise ExtractionError(f"Error de la API del LLM ({exc.status_code})") from exc
+            raise ExtractionError(f"Erro da API do LLM ({exc.status_code})") from exc
         except anthropic.APIConnectionError as exc:
-            raise ExtractionError("No se pudo conectar con la API del LLM") from exc
+            raise ExtractionError("Não foi possível conectar à API do LLM") from exc
         except anthropic.AnthropicError as exc:  # p. ej. falta ANTHROPIC_API_KEY
-            raise ExtractionError(f"API del LLM no configurada: {type(exc).__name__}") from exc
+            raise ExtractionError(f"API do LLM não configurada: {type(exc).__name__}") from exc
         except ValidationError as exc:
             last_error = exc
             logger.warning("respuesta inválida del LLM", extra={"intento": attempt + 1})
@@ -161,7 +161,7 @@ def extract(pdf: PdfContent, model: str | None = None) -> ExtractionResult:
         tokens_in += response.usage.input_tokens
         tokens_out += response.usage.output_tokens
         if response.stop_reason in ("refusal", "max_tokens") or response.parsed_output is None:
-            last_error = ExtractionError(f"Respuesta incompleta: {response.stop_reason}")
+            last_error = ExtractionError(f"Resposta incompleta: {response.stop_reason}")
             continue
 
         return ExtractionResult(
@@ -173,4 +173,4 @@ def extract(pdf: PdfContent, model: str | None = None) -> ExtractionResult:
             tiempo_ms=int((time.perf_counter() - start) * 1000),
         )
 
-    raise ExtractionError("El LLM no devolvió una factura válida") from last_error
+    raise ExtractionError("O LLM não retornou uma fatura válida") from last_error

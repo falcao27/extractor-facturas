@@ -23,8 +23,8 @@ def test_subir_factura(client, pdf_bytes):
 
     pasos = body["pasos"]
     assert [p["nombre"] for p in pasos] == [
-        "Validación del archivo", "Lectura del PDF", "Extracción de datos",
-        "Validación de reglas de negocio", "Guardado",
+        "Validação do arquivo", "Leitura do PDF", "Extração de dados",
+        "Validação das regras de negócio", "Armazenamento",
     ]
     assert all(p["estado"] == "ok" for p in pasos)
     assert "PDF digital" in pasos[1]["detalle"]
@@ -115,10 +115,11 @@ def test_exportar_excel(client, pdf_bytes):
     r = client.get("/facturas/export.xlsx")
     assert r.status_code == 200
     wb = load_workbook(io.BytesIO(r.content))
-    assert wb.sheetnames == ["Facturas", "Líneas"]
-    ws = wb["Facturas"]
+    assert wb.sheetnames == ["Faturas", "Linhas"]
+    ws = wb["Faturas"]
     assert ws["B2"].value == "F2026-0001"
     assert ws["A1"].font.bold
     assert ws["C2"].number_format == "DD/MM/YYYY"
     assert "€" in ws["L2"].number_format
-    assert wb["Líneas"].max_row == 3
+    assert ws["M2"].value == "Processada"
+    assert wb["Linhas"].max_row == 3

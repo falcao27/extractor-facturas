@@ -16,14 +16,14 @@ CENT = Decimal("0.01")
 
 # Regla visible -> campos de aviso que la incumplen ("x[" = prefijo, resto = exacto)
 REGLAS: list[tuple[str, tuple[str, ...]]] = [
-    ("NIF/CIF del emisor válido", ("emisor.nif",)),
-    ("NIF/CIF del receptor válido", ("receptor.nif",)),
-    ("Cada línea: cantidad × precio = importe", ("lineas[",)),
-    ("Suma de líneas = base imponible", ("base_imponible", "lineas")),
-    ("Tipo de IVA permitido (21, 10, 4 o 0 %)", ("tipo_iva",)),
-    ("Base × tipo de IVA = cuota de IVA", ("cuota_iva",)),
+    ("NIF/CIF do emissor válido", ("emisor.nif",)),
+    ("NIF/CIF do destinatário válido", ("receptor.nif",)),
+    ("Cada linha: quantidade × preço = valor", ("lineas[",)),
+    ("Soma das linhas = base tributável", ("base_imponible", "lineas")),
+    ("Alíquota de IVA permitida (21, 10, 4 ou 0 %)", ("tipo_iva",)),
+    ("Base × alíquota de IVA = valor do IVA", ("cuota_iva",)),
     ("Base + IVA − IRPF = total", ("total",)),
-    ("Fecha de emisión no futura", ("fecha_emision",)),
+    ("Data de emissão não futura", ("fecha_emision",)),
 ]
 
 
@@ -92,7 +92,7 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
 
     for campo, empresa in (("emisor.nif", f.emisor), ("receptor.nif", f.receptor)):
         if not validar_nif(empresa.nif):
-            avisos.append(Aviso(campo=campo, mensaje=f"NIF/CIF no válido: {empresa.nif}"))
+            avisos.append(Aviso(campo=campo, mensaje=f"NIF/CIF inválido: {empresa.nif}"))
 
     base = _d(f.base_imponible)
     cuota = _d(f.cuota_iva)
@@ -105,8 +105,8 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
             avisos.append(
                 Aviso(
                     campo="base_imponible",
-                    mensaje=f"La suma de las líneas ({_eur(suma)}) no coincide con la base "
-                    f"imponible ({_eur(base)})",
+                    mensaje=f"A soma das linhas ({_eur(suma)}) não confere com a base "
+                    f"tributável ({_eur(base)})",
                 )
             )
         for i, linea in enumerate(f.lineas):
@@ -115,16 +115,16 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
                 avisos.append(
                     Aviso(
                         campo=f"lineas[{i}].importe",
-                        mensaje=f"Cantidad × precio ({_eur(esperado)}) no coincide con el "
-                        f"importe ({_eur(_d(linea.importe))})",
+                        mensaje=f"Quantidade × preço ({_eur(esperado)}) não confere com o "
+                        f"valor ({_eur(_d(linea.importe))})",
                     )
                 )
     else:
-        avisos.append(Aviso(campo="lineas", mensaje="La factura no tiene líneas de detalle"))
+        avisos.append(Aviso(campo="lineas", mensaje="A fatura não tem linhas de detalhe"))
 
     if tipo not in TIPOS_IVA:
         avisos.append(
-            Aviso(campo="tipo_iva", mensaje=f"Tipo de IVA no habitual: {_pct(tipo)} %")
+            Aviso(campo="tipo_iva", mensaje=f"Alíquota de IVA incomum: {_pct(tipo)} %")
         )
 
     cuota_esperada = (base * tipo / 100).quantize(CENT, rounding=ROUND_HALF_UP)
@@ -132,7 +132,7 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
         avisos.append(
             Aviso(
                 campo="cuota_iva",
-                mensaje=f"Base × {_pct(tipo)} % = {_eur(cuota_esperada)}, pero la cuota es "
+                mensaje=f"Base × {_pct(tipo)} % = {_eur(cuota_esperada)}, mas o IVA informado é "
                 f"{_eur(cuota)}",
             )
         )
@@ -142,7 +142,7 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
         avisos.append(
             Aviso(
                 campo="total",
-                mensaje=f"Base + IVA − IRPF = {_eur(total_esperado)}, pero el total es "
+                mensaje=f"Base + IVA − IRPF = {_eur(total_esperado)}, mas o total é "
                 f"{_eur(_d(f.total))}",
             )
         )
@@ -151,7 +151,7 @@ def validar_factura(f: Factura, hoy: date | None = None) -> list[Aviso]:
         avisos.append(
             Aviso(
                 campo="fecha_emision",
-                mensaje=f"La fecha de emisión ({f.fecha_emision:%d/%m/%Y}) está en el futuro",
+                mensaje=f"A data de emissão ({f.fecha_emision:%d/%m/%Y}) está no futuro",
                 severidad=Severidad.error,
             )
         )

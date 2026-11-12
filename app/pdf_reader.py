@@ -35,11 +35,11 @@ def read_pdf(source: str | Path | bytes) -> PdfContent:
     try:
         pdf = pdfplumber.open(io.BytesIO(data))
     except Exception as exc:  # pdfminer lanza varios tipos según el daño del archivo
-        raise PdfInvalido("El archivo no es un PDF válido") from exc
+        raise PdfInvalido("O arquivo não é um PDF válido") from exc
 
     with pdf:
         if not pdf.pages:
-            raise PdfInvalido("El PDF no tiene páginas")
+            raise PdfInvalido("O PDF não tem páginas")
         pages = pdf.pages[:MAX_PAGES]
         texto = "\n\n".join((page.extract_text() or "") for page in pages).strip()
         if len(texto) >= MIN_CHARS:

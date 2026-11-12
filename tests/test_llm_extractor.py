@@ -66,7 +66,7 @@ def test_extract_sin_credenciales_da_error_controlado(monkeypatch):
 
     monkeypatch.setattr(llm_extractor, "get_client",
                         lambda: SimpleNamespace(messages=SinCredenciales()))
-    with pytest.raises(ExtractionError, match="no configurada"):
+    with pytest.raises(ExtractionError, match="não configurada"):
         extract(PdfContent(texto="FACTURA ..."))
 
 

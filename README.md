@@ -1,188 +1,195 @@
-# 🧾 Extractor de facturas con IA
+# 🧾 Extrator de faturas com IA
 
 [![CI](https://github.com/falcao27/extractor-facturas/actions/workflows/ci.yml/badge.svg)](https://github.com/falcao27/extractor-facturas/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Servicio que recibe el PDF de una factura española, extrae los datos con un LLM (Claude),
-**valida NIF/CIF, IVA, IRPF y totales** con reglas de negocio y lo exporta todo a Excel.
+Serviço que recebe o PDF de uma fatura espanhola, extrai os dados com um LLM (Claude),
+**valida NIF/CIF, IVA, IRPF e totais** com regras de negócio e exporta tudo para Excel.
 
-**Demo:** _[enlace de Render]_ · **API:** `/docs` (Swagger automático)
+**Demo:** _[link do Render]_ · **API:** `/docs` (Swagger automático)
 
-| Factura con avisos | Tras corregir y confirmar |
+| Fatura com avisos | Depois de corrigir e confirmar |
 |---|---|
-| ![Factura con avisos](docs/factura_con_avisos.png) | ![Factura revisada](docs/factura_revisada.png) |
+| ![Fatura com avisos](docs/factura_con_avisos.png) | ![Fatura revisada](docs/factura_revisada.png) |
 
-La interfaz muestra cada paso del procesamiento (validación del archivo, lectura del PDF,
-extracción, reglas de negocio, guardado y revisión manual) y el resultado con el checklist
-de validaciones.
+A interface mostra cada etapa do processamento (validação do arquivo, leitura do PDF,
+extração, regras de negócio, armazenamento e revisão manual) e o resultado com o checklist
+das validações.
 
-## El problema
+## O problema
 
-Las pymes y gestorías españolas reciben cientos de facturas en PDF con formatos distintos y
-las teclean a mano en su software contable. Un LLM puede leerlas, pero **se equivoca**: este
-proyecto no se fía del modelo, sino que comprueba cada resultado con las reglas fiscales
-y **mide la precisión** sobre un conjunto de prueba.
+Pequenas empresas e escritórios de contabilidade na Espanha recebem centenas de faturas em
+PDF, com layouts diferentes, e digitam tudo à mão no sistema contábil. Um LLM consegue
+ler essas faturas, mas **erra**: este projeto não confia cegamente no modelo. Cada resultado
+passa pelas regras fiscais, e a **precisão é medida** num conjunto de teste.
 
-## Qué extrae
+## O que é extraído
 
-Número, fecha de emisión, emisor y receptor (razón social + NIF/CIF), líneas (descripción,
-cantidad, precio unitario, importe), base imponible, tipo de IVA (21/10/4/0 %), cuota de IVA,
-retención de IRPF y total.
+Número, data de emissão, emissor e destinatário (razão social + NIF/CIF), linhas (descrição,
+quantidade, preço unitário, valor), base tributável (*base imponible*), alíquota de IVA
+(21/10/4/0 %), valor do IVA (*cuota*), retenção de IRPF e total.
 
-## Reglas de validación
+## Regras de validação
 
-Cada regla genera un **aviso** (no bloquea): el usuario revisa y corrige.
+Cada regra gera um **aviso** (não bloqueia): o usuário revisa e corrige.
 
-| Regla | Detalle |
+| Regra | Detalhe |
 |---|---|
-| NIF / NIE | 8 dígitos módulo 23 → letra de control (NIE: X/Y/Z → 0/1/2) |
-| CIF | letra inicial + 7 dígitos + dígito o letra de control |
-| Líneas | Σ importes = base imponible; cantidad × precio = importe |
-| IVA | base × tipo / 100 = cuota; tipo ∈ {21, 10, 4, 0} |
+| NIF / NIE | 8 dígitos módulo 23 → letra de controle (NIE: X/Y/Z → 0/1/2) |
+| CIF | letra inicial + 7 dígitos + dígito ou letra de controle |
+| Linhas | Σ valores = base tributável; quantidade × preço = valor |
+| IVA | base × alíquota / 100 = valor do IVA; alíquota ∈ {21, 10, 4, 0} |
 | Total | base + IVA − IRPF = total |
-| Fecha | la emisión no puede estar en el futuro |
+| Data | a emissão não pode estar no futuro |
 
-Las cuentas usan `Decimal` con tolerancia de 0,02 €.
+As contas usam `Decimal`, com tolerância de 0,02 €.
 
-## Evaluación
+## Avaliação
 
-`eval/generate_invoices.py` genera 30 facturas ficticias con Faker (`es_ES`) y reportlab, cada
-una con su JSON de referencia: **3 diseños** (uno con formato español `1.234,56`), con y sin
-IRPF, de 1 a 10 líneas, **4 escaneadas** (página rasterizada y girada, sin capa de texto, que
-se envía como imagen al modelo) y **3 trampas** (NIF inválido o total erróneo).
+`eval/generate_invoices.py` gera 30 faturas fictícias com Faker (`es_ES`) e reportlab, cada
+uma com seu JSON de referência (gabarito): **3 layouts** (um com formato espanhol `1.234,56`),
+com e sem IRPF, de 1 a 10 linhas, **4 escaneadas** (página rasterizada e levemente girada,
+sem camada de texto, enviada ao modelo como imagem) e **3 armadilhas** (NIF inválido ou
+total errado).
 
-`eval/run_eval.py` compara campo a campo (texto normalizado, números con tolerancia de 0,01)
-y guarda la caché de respuestas para no pagar dos veces la misma factura.
+`eval/run_eval.py` compara campo a campo (texto normalizado, números com tolerância de 0,01)
+e guarda as respostas em cache para não pagar duas vezes pela mesma fatura.
 
 ```bash
 python -m eval.run_eval --models claude-haiku-5-5 claude-sonnet-5-5
 ```
 
-<!-- RESULTADOS: sustituir por el contenido de eval/results.md -->
+<!-- RESULTADOS: substituir pelo conteúdo de eval/results.md -->
 | Campo | claude-haiku-5-5 | claude-sonnet-5-5 |
 |---|---:|---:|
-| NIF emisor | _pendiente_ | _pendiente_ |
-| Base imponible | _pendiente_ | _pendiente_ |
-| Total | _pendiente_ | _pendiente_ |
-| Coste medio por factura | _pendiente_ | _pendiente_ |
+| NIF emissor | _pendente_ | _pendente_ |
+| Base tributável | _pendente_ | _pendente_ |
+| Total | _pendente_ | _pendente_ |
+| Custo médio por fatura | _pendente_ | _pendente_ |
 
-## Arquitectura
+## Arquitetura
 
 ```
-PDF ─► FastAPI (valida: solo PDF, ≤ 5 MB, límite por IP)
+PDF ─► FastAPI (valida: só PDF, ≤ 5 MB, limite por IP)
         │
         ├─► pdfplumber ── texto ──────────┐
         │     └─ < 50 caracteres → PNG ───┤
         │                                 ▼
-        │                 Claude · salida estructurada (esquema Pydantic)
+        │                 Claude · saída estruturada (schema Pydantic)
         │                                 │
-        ├─► reglas de negocio (NIF, IVA, IRPF, totales, fecha) → avisos
-        ├─► PostgreSQL (datos, avisos JSONB, modelo, tokens, coste, tiempo)
-        └─► Excel (pandas + openpyxl)          Streamlit ◄─ revisión y corrección
+        ├─► regras de negócio (NIF, IVA, IRPF, totais, data) → avisos
+        ├─► PostgreSQL (dados, avisos JSONB, modelo, tokens, custo, tempo)
+        └─► Excel (pandas + openpyxl)          Streamlit ◄─ revisão e correção
 ```
 
-| Capa | Herramienta |
+| Camada | Ferramenta |
 |---|---|
 | API | FastAPI + Uvicorn |
-| Esquema | Pydantic v2 (el mismo modelo para el LLM, la API y la evaluación) |
-| LLM | API de Anthropic, `messages.parse` con salida estructurada |
-| PDF | pdfplumber (texto) y renderizado a PNG para escaneados |
-| Base de datos | PostgreSQL + SQLAlchemy 2 + Alembic |
-| Interfaz | Streamlit |
-| Calidad | Pytest (cobertura > 90 %), Ruff, GitHub Actions, logs JSON |
+| Schema | Pydantic v2 (o mesmo modelo para o LLM, a API e a avaliação) |
+| LLM | API da Anthropic, `messages.parse` com saída estruturada |
+| PDF | pdfplumber (texto) e renderização em PNG para escaneados |
+| Banco de dados | PostgreSQL + SQLAlchemy 2 + Alembic |
+| Interface | Streamlit |
+| Qualidade | Pytest (cobertura > 90 %), Ruff, GitHub Actions, logs em JSON |
 | Infra | Docker Compose, Render |
 
-**Decisiones:**
+**Decisões:**
 
-- **Salida estructurada** en lugar de pedir JSON en el prompt: el servidor garantiza que la
-  respuesta cumple el esquema, y Pydantic la valida otra vez. Los reintentos solo cubren
-  `refusal`/`max_tokens`; el SDK ya reintenta timeouts, 429 y 5xx.
-- **`float` en el esquema del LLM y `Decimal` en las cuentas**, para no depender de cómo cada
-  proveedor serializa decimales.
-- **Los PDF no se guardan**: se procesan en memoria y solo se persisten los datos extraídos (RGPD).
+- **Saída estruturada** em vez de pedir JSON no prompt: o servidor garante que a resposta
+  segue o schema, e o Pydantic valida de novo. As novas tentativas só cobrem
+  `refusal`/`max_tokens`; o SDK já repete timeouts, 429 e 5xx.
+- **`float` no schema do LLM e `Decimal` nas contas**, para não depender de como cada
+  provedor serializa decimais.
+- **Os PDFs não são armazenados**: são processados em memória, e só os dados extraídos são
+  gravados (LGPD/RGPD).
+- O código e as rotas usam os termos espanhóis do domínio (`factura`, `base_imponible`),
+  porque as faturas e o prompt do modelo são em espanhol; a interface e as mensagens são em
+  português.
 
 ## API
 
-| Método | Ruta | Descripción |
+| Método | Rota | Descrição |
 |---|---|---|
-| POST | `/facturas` | Sube un PDF: extrae, valida, guarda y devuelve el JSON con avisos |
-| GET | `/facturas` | Lista paginada, filtros por emisor (nombre o NIF) y periodo |
-| GET | `/facturas/{id}` | Detalle |
-| PATCH | `/facturas/{id}` | Corrección manual (revalida); `confirmar: true` → `revisada` |
-| GET | `/facturas/export.xlsx` | Excel con hoja de facturas y hoja de líneas |
-| GET | `/health` | Estado de la API y de la base de datos |
+| POST | `/facturas` | Envia um PDF: extrai, valida, grava e devolve o JSON com etapas e avisos |
+| GET | `/facturas` | Lista paginada, com filtros por emissor (nome ou NIF) e período |
+| GET | `/facturas/{id}` | Detalhe |
+| PATCH | `/facturas/{id}` | Correção manual (revalida); `confirmar: true` → `revisada` |
+| GET | `/facturas/export.xlsx` | Excel com abas de faturas e de linhas |
+| GET | `/health` | Status da API e do banco |
 
-Estados: `procesada`, `con_avisos`, `revisada`, `error`.
+Status: `procesada`, `con_avisos`, `revisada`, `error`.
 
-## Cómo ejecutarlo
+## Como rodar
 
 ### Docker (recomendado)
 
 ```bash
-cp .env.example .env      # rellena ANTHROPIC_API_KEY
+cp .env.example .env      # preencha ANTHROPIC_API_KEY
 docker compose up --build
 ```
 
-- Interfaz: http://localhost:8501
-- API y documentación: http://localhost:8000/docs
+- Interface: http://localhost:8501
+- API e documentação: http://localhost:8000/docs
 
 ### Local
 
-```bash
+```powershell
 py -3.12 -m venv .venv
 .venv\Scripts\activate                # Linux/macOS: source .venv/bin/activate
 pip install -e ".[dev]"
-copy .env.example .env                # rellena ANTHROPIC_API_KEY y DATABASE_URL
+copy .env.example .env                # preencha ANTHROPIC_API_KEY e DATABASE_URL
 alembic upgrade head
 uvicorn app.main:app --reload
-streamlit run ui/streamlit_app.py     # en otra terminal
+streamlit run ui/streamlit_app.py     # em outro terminal
 ```
 
-### Modo demo (sin clave ni créditos)
+### Modo demo (sem chave nem créditos)
 
-Con `LLM_PROVIDER=demo` no se llama al LLM: la API reconoce las 30 facturas de
-`eval/dataset` por su hash y devuelve los datos de referencia. Todo lo demás es real:
-lectura del PDF, validaciones, avisos, base de datos, corrección y Excel.
+Com `LLM_PROVIDER=demo`, o LLM não é chamado: a API reconhece as faturas de `ejemplos/` e
+de `eval/dataset` pelo hash e devolve os dados de referência. Todo o resto é real: leitura
+do PDF, validações, avisos, banco, correção e Excel.
 
 ```powershell
 $env:LLM_PROVIDER="demo"; $env:DATABASE_URL="sqlite:///local.db"
 alembic upgrade head
-uvicorn app.main:app                  # y en otra terminal: streamlit run ui/streamlit_app.py
+uvicorn app.main:app                  # e em outro terminal: streamlit run ui/streamlit_app.py
 ```
 
-Prueba con `ejemplos/factura_prueba_con_errores.pdf` (NIF inválido y cuota de IVA mal
-calculada) o `ejemplos/factura_prueba_correcta.pdf`. También están en la barra lateral.
+Teste com `ejemplos/factura_prueba_con_errores.pdf` (NIF inválido e IVA calculado errado)
+ou `ejemplos/factura_prueba_correcta.pdf`. As duas também estão na barra lateral.
 
-### Tests y calidad
+### Testes e qualidade
 
 ```bash
 ruff check .
-pytest --cov                          # el LLM se simula: los tests no gastan créditos
-python -m eval.generate_invoices      # regenera el dataset (determinista, seed 42)
+pytest --cov                          # o LLM é simulado: os testes não gastam créditos
+python -m eval.generate_invoices      # regenera o dataset (determinístico, seed 42)
 ```
 
-## Despliegue en Render
+## Deploy no Render
 
-`render.yaml` define la API, la interfaz y PostgreSQL. En Render: **New → Blueprint →** este
-repositorio. Después, rellena `ANTHROPIC_API_KEY` en la API y `API_URL` en la interfaz.
+O `render.yaml` define a API, a interface e o PostgreSQL. No Render: **New → Blueprint →**
+este repositório. Depois, preencha `ANTHROPIC_API_KEY` na API (ou use `LLM_PROVIDER=demo`)
+e `API_URL` na interface.
 
-> La capa gratuita de Render duerme tras 15 minutos sin uso: la primera petición puede tardar
-> ~1 minuto. La demo limita a 20 facturas por IP y día para proteger los créditos.
+> No plano gratuito do Render, o serviço dorme após 15 minutos sem uso: a primeira
+> requisição pode levar ~1 minuto. A demo limita 20 faturas por IP por dia para proteger
+> os créditos.
 
-## Privacidad
+## Privacidade
 
-Todas las facturas del repositorio son **ficticias**, generadas con Faker. Los PDF subidos se
-procesan en memoria y **nunca se guardan**; solo se almacenan los datos extraídos. No subas
-facturas reales a la demo pública.
+Todas as faturas do repositório são **fictícias**, geradas com Faker. Os PDFs enviados são
+processados em memória e **nunca são armazenados**; só os dados extraídos ficam no banco.
+Não envie faturas reais para a demo pública.
 
-## Próximos pasos
+## Próximos passos
 
-- Cola de trabajo (Celery/RQ) y Batch API para procesar miles de facturas al día
-- Caché por hash del PDF para no reprocesar duplicados
-- Autenticación y multiusuario
-- Exportación a formatos contables (A3, Contaplus) y Facturae/VeriFactu
+- Fila de processamento (Celery/RQ) e Batch API para milhares de faturas por dia
+- Cache por hash do PDF para não reprocessar duplicadas
+- Autenticação e múltiplos usuários
+- Exportação para formatos contábeis (A3, Contaplus) e Facturae/VeriFactu
 
-## Licencia
+## Licença
 
 MIT © Jefferson Falcão

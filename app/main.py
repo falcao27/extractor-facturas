@@ -27,16 +27,20 @@ setup_logging(settings.log_level)
 logger = logging.getLogger("app")
 
 app = FastAPI(
-    title="Extractor de facturas con IA",
+    title="Extrator de faturas com IA",
     version="1.0.0",
     description=(
-        "Extrae y valida datos de facturas españolas en PDF (NIF/CIF, IVA, IRPF, totales) "
-        "con un LLM y los exporta a Excel. Los PDF no se guardan: se procesan en memoria."
+        "Extrai e valida dados de faturas espanholas em PDF (NIF/CIF, IVA, IRPF, totais) "
+        "com um LLM e exporta para Excel. Os PDFs não são armazenados: são processados "
+        "em memória."
     ),
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 DbSession = Annotated[Session, Depends(get_db)]
+
+ESTADOS_PT = {"procesada": "processada", "con_avisos": "com avisos",
+              "revisada": "revisada", "error": "erro"}
 
 
 @app.middleware("http")
@@ -76,7 +80,7 @@ class RateLimiter:
         with self._lock:
             if self._counts[key] >= self.limit:
                 raise HTTPException(
-                    429, f"Límite de {self.limit} facturas por día alcanzado. Vuelve mañana."
+                    429, f"Limite de {self.limit} faturas por dia atingido. Tente novamente amanhã."
                 )
             self._counts[key] += 1
 
@@ -103,12 +107,12 @@ async def leer_pdf_subido(archivo: UploadFile) -> bytes:
     max_bytes = settings.max_upload_mb * 1024 * 1024
     nombre = archivo.filename or ""
     if not nombre.lower().endswith(".pdf") and archivo.content_type != "application/pdf":
-        raise HTTPException(422, "Solo se aceptan archivos PDF")
+        raise HTTPException(422, "Apenas arquivos PDF são aceitos")
     data = await archivo.read(max_bytes + 1)
     if len(data) > max_bytes:
-        raise HTTPException(422, f"El archivo supera el máximo de {settings.max_upload_mb} MB")
+        raise HTTPException(422, f"O arquivo excede o máximo de {settings.max_upload_mb} MB")
     if not data.startswith(b"%PDF"):
-        raise HTTPException(422, "El archivo no es un PDF válido")
+        raise HTTPException(422, "O arquivo não é um PDF válido")
     return data
 
 
@@ -136,9 +140,9 @@ async def subir_factura(
     data = await leer_pdf_subido(archivo)
     rate_limiter.check(client_ip(request))
     pasos.append(Paso(
-        nombre="Validación del archivo", estado="ok", ms=_ms(t),
-        detalle=f"{archivo.filename} · {len(data) / 1024:.0f} KB · firma %PDF correcta · "
-                f"límite de {settings.max_upload_mb} MB respetado",
+        nombre="Validação do arquivo", estado="ok", ms=_ms(t),
+        detalle=f"{archivo.filename} · {len(data) / 1024:.0f} KB · assinatura %PDF correta · "
+                f"limite de {settings.max_upload_mb} MB respeitado",
     ))
 
     t = time.perf_counter()
@@ -149,13 +153,13 @@ async def subir_factura(
     finally:
         del data  # el PDF nunca se escribe en disco; solo se guardan los datos extraídos
     pasos.append(Paso(
-        nombre="Lectura del PDF", estado="ok", ms=_ms(t),
+        nombre="Leitura do PDF", estado="ok", ms=_ms(t),
         detalle=(
-            f"{contenido.paginas} página(s) sin capa de texto → convertidas a imagen PNG "
-            "(PDF escaneado, se envía al modelo con visión)"
+            f"{contenido.paginas} página(s) sem camada de texto → convertidas em imagem PNG "
+            "(PDF escaneado, enviado ao modelo com visão)"
             if contenido.escaneado
             else f"{contenido.paginas} página(s) · {len(contenido.texto)} caracteres de texto "
-                 "extraídos con pdfplumber (PDF digital)"
+                 "extraídos com pdfplumber (PDF digital)"
         ),
     ))
 
@@ -166,16 +170,16 @@ async def subir_factura(
             "extracción fallida",
             extra={"archivo": archivo.filename, "error": str(exc), "causa": repr(exc.__cause__)},
         )
-        raise HTTPException(502, f"No se pudo extraer la factura: {exc}") from exc
+        raise HTTPException(502, f"Não foi possível extrair a fatura: {exc}") from exc
     f = result.factura
     pasos.append(Paso(
-        nombre="Extracción de datos", estado="ok", ms=result.tiempo_ms,
+        nombre="Extração de dados", estado="ok", ms=result.tiempo_ms,
         detalle=(
-            ("Modo demo: datos de referencia, sin llamar al LLM" if result.modelo == "demo"
-             else f"{result.modelo} con salida estructurada · "
+            ("Modo demo: dados de referência, sem chamar o LLM" if result.modelo == "demo"
+             else f"{result.modelo} com saída estruturada · "
                   f"{result.tokens_entrada + result.tokens_salida} tokens · "
                   f"{result.coste_eur:.5f} €")
-            + f" · factura {f.numero} de {f.emisor.nombre} · {len(f.lineas)} línea(s)"
+            + f" · fatura {f.numero} de {f.emisor.nombre} · {len(f.lineas)} linha(s)"
         ),
     ))
 
@@ -184,8 +188,8 @@ async def subir_factura(
     reglas = resumen_reglas(avisos)
     correctas = sum(r.ok for r in reglas)
     pasos.append(Paso(
-        nombre="Validación de reglas de negocio", estado="ok" if not avisos else "aviso",
-        ms=_ms(t), detalle=f"{correctas} de {len(reglas)} reglas correctas"
+        nombre="Validação das regras de negócio", estado="ok" if not avisos else "aviso",
+        ms=_ms(t), detalle=f"{correctas} de {len(reglas)} regras corretas"
         + (f" · {len(avisos)} aviso(s) para revisar" if avisos else ""),
     ))
 
@@ -193,9 +197,9 @@ async def subir_factura(
     row = repository.crear(db, archivo.filename or "factura.pdf", result, avisos,
                            contenido.escaneado)
     pasos.append(Paso(
-        nombre="Guardado", estado="ok", ms=_ms(t),
-        detalle=f"Factura #{row.id} guardada con estado «{row.estado}» · "
-                "el PDF se descarta (no se almacena)",
+        nombre="Armazenamento", estado="ok", ms=_ms(t),
+        detalle=f"Fatura #{row.id} salva com status «{ESTADOS_PT[row.estado]}» · "
+                "o PDF é descartado (não é armazenado)",
     ))
     logger.info(
         "factura procesada",
@@ -219,7 +223,7 @@ def listar_facturas(
     db: DbSession,
     page: Annotated[int, Query(ge=1)] = 1,
     size: Annotated[int, Query(ge=1, le=100)] = 20,
-    emisor: Annotated[str | None, Query(description="Nombre o NIF del emisor")] = None,
+    emisor: Annotated[str | None, Query(description="Nome ou NIF do emissor")] = None,
     desde: date | None = None,
     hasta: date | None = None,
 ) -> FacturaList:
@@ -236,7 +240,7 @@ def exportar_excel(db: DbSession) -> Response:
     return Response(
         contenido,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": 'attachment; filename="facturas.xlsx"'},
+        headers={"Content-Disposition": 'attachment; filename="faturas.xlsx"'},
     )
 
 
@@ -244,7 +248,7 @@ def exportar_excel(db: DbSession) -> Response:
 def obtener_factura(factura_id: int, db: DbSession) -> FacturaRead:
     row = repository.obtener(db, factura_id)
     if row is None:
-        raise HTTPException(404, "Factura no encontrada")
+        raise HTTPException(404, "Fatura não encontrada")
     return repository.to_read(row)
 
 
@@ -252,7 +256,7 @@ def obtener_factura(factura_id: int, db: DbSession) -> FacturaRead:
 def corregir_factura(factura_id: int, cambios: FacturaPatch, db: DbSession) -> FacturaRead:
     row = repository.obtener(db, factura_id)
     if row is None:
-        raise HTTPException(404, "Factura no encontrada")
+        raise HTTPException(404, "Fatura não encontrada")
 
     datos = repository.to_factura(row).model_dump()
     datos.update(cambios.model_dump(exclude_unset=True, exclude={"confirmar"}))
