@@ -1,0 +1,74 @@
+{
+  "datos": {
+    "numero": "2026/023",
+    "fecha_emision": "2026-02-01",
+    "emisor": {
+      "nombre": "Compañía Hurtado & Asociados S.Coop.",
+      "nif": "V4205991E"
+    },
+    "receptor": {
+      "nombre": "Gonzalez y Yáñez S.Com.",
+      "nif": "W8289699D"
+    },
+    "lineas": [
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 3,
+        "precio_unitario": 779.9,
+        "importe": 2339.7
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 20,
+        "precio_unitario": 620.06,
+        "importe": 12401.2
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 20,
+        "precio_unitario": 208.11,
+        "importe": 4162.2
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 3,
+        "precio_unitario": 353.79,
+        "importe": 1061.37
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 1,
+        "precio_unitario": 8.12,
+        "importe": 8.12
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 12,
+        "precio_unitario": 302.06,
+        "importe": 3624.72
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 2252,
+        "precio_unitario": 0.08,
+        "importe": 180.16
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 10,
+        "precio_unitario": 185.65,
+        "importe": 1856.5
+      }
+    ],
+    "base_imponible": 25633.97,
+    "tipo_iva": 10.0,
+    "cuota_iva": 2563.4,
+    "retencion_irpf": null,
+    "total": 28197.37
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

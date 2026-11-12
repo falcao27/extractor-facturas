@@ -1,0 +1,62 @@
+{
+  "datos": {
+    "numero": "FAC-00016",
+    "fecha_emision": "2026-02-25",
+    "emisor": {
+      "nombre": "Industrias Llabrés y asociados S.Com.",
+      "nif": "N3030628F"
+    },
+    "receptor": {
+      "nombre": "Anita de Contreras",
+      "nif": "60015144W"
+    },
+    "lineas": [
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 12,
+        "precio_unitario": 1173.84,
+        "importe": 14086.08
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 1766,
+        "precio_unitario": 0.14,
+        "importe": 247.24
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 2,
+        "precio_unitario": 392.39,
+        "importe": 784.78
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 12,
+        "precio_unitario": 329.74,
+        "importe": 3956.88
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 3221,
+        "precio_unitario": 0.13,
+        "importe": 418.73
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 3,
+        "precio_unitario": 116.7,
+        "importe": 350.1
+      }
+    ],
+    "base_imponible": 19843.81,
+    "tipo_iva": 21.0,
+    "cuota_iva": 4167.2,
+    "retencion_irpf": 2976.57,
+    "total": 21034.44
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

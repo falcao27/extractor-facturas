@@ -1,0 +1,38 @@
+{
+  "datos": {
+    "numero": "2026/030",
+    "fecha_emision": "2026-08-31",
+    "emisor": {
+      "nombre": "Escolano y Domínguez S.A.",
+      "nif": "F0632458F"
+    },
+    "receptor": {
+      "nombre": "Hernando y Valenciano S.L.N.E",
+      "nif": "J2347491I"
+    },
+    "lineas": [
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 3,
+        "precio_unitario": 453.3,
+        "importe": 1359.9
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 5,
+        "precio_unitario": 292.47,
+        "importe": 1462.35
+      }
+    ],
+    "base_imponible": 2822.25,
+    "tipo_iva": 21.0,
+    "cuota_iva": 592.67,
+    "retencion_irpf": null,
+    "total": 3414.92
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

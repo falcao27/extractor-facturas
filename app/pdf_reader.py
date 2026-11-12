@@ -1,0 +1,69 @@
+"""Lectura del PDF: texto si es digital, imágenes PNG si es escaneado."""
+
+import io
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import pdfplumber
+
+MIN_CHARS = 50
+IMAGE_RESOLUTION = 150
+MAX_PAGES = 10
+
+
+class PdfInvalido(ValueError):
+    pass
+
+
+@dataclass
+class PdfContent:
+    texto: str
+    imagenes: list[bytes] = field(default_factory=list)
+    paginas: int = 0
+
+    @property
+    def escaneado(self) -> bool:
+        return bool(self.imagenes)
+
+
+def _open(source: str | Path | bytes):
+    if isinstance(source, bytes):
+        return pdfplumber.open(io.BytesIO(source))
+    return pdfplumber.open(source)
+
+
+def read_pdf(source: str | Path | bytes) -> PdfContent:
+    """Extrae el texto de todas las páginas; si casi no hay texto, renderiza las páginas a PNG."""
+    try:
+        pdf = _open(source)
+    except Exception as exc:  # pdfminer lanza varios tipos según el daño del archivo
+        raise PdfInvalido("El archivo no es un PDF válido") from exc
+
+    with pdf:
+        if not pdf.pages:
+            raise PdfInvalido("El PDF no tiene páginas")
+        pages = pdf.pages[:MAX_PAGES]
+        texto = "\n\n".join((page.extract_text() or "") for page in pages).strip()
+        if len(texto) >= MIN_CHARS:
+            return PdfContent(texto=texto, paginas=len(pages))
+
+        imagenes = []
+        for page in pages:
+            buffer = io.BytesIO()
+            page.to_image(resolution=IMAGE_RESOLUTION).original.save(buffer, format="PNG")
+            imagenes.append(buffer.getvalue())
+        return PdfContent(texto=texto, imagenes=imagenes, paginas=len(pages))
+
+
+def read_pdf_text(path: str | Path) -> str:
+    """Atajo para depurar: `python -m app.pdf_reader factura.pdf`."""
+    return read_pdf(path).texto
+
+
+if __name__ == "__main__":
+    import sys
+
+    for arg in sys.argv[1:]:
+        content = read_pdf(arg)
+        print(f"== {arg} ({content.paginas} pág., escaneado={content.escaneado})")
+        print(content.texto or "[sin texto: se enviará como imagen]")

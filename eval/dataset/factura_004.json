@@ -1,0 +1,44 @@
+{
+  "datos": {
+    "numero": "2026/004",
+    "fecha_emision": "2026-07-25",
+    "emisor": {
+      "nombre": "Pizarro y Solé S.Coop.",
+      "nif": "J2249920F"
+    },
+    "receptor": {
+      "nombre": "Familia Lasa S.L.",
+      "nif": "N6157149C"
+    },
+    "lineas": [
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 12,
+        "precio_unitario": 831.92,
+        "importe": 9983.04
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 3,
+        "precio_unitario": 185.35,
+        "importe": 556.05
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 3,
+        "precio_unitario": 85.2,
+        "importe": 255.6
+      }
+    ],
+    "base_imponible": 10794.69,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2266.88,
+    "retencion_irpf": 1619.2,
+    "total": 11442.37
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": true,
+    "trampa": null
+  }
+}

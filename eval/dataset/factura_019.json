@@ -1,0 +1,68 @@
+{
+  "datos": {
+    "numero": "2026/019",
+    "fecha_emision": "2026-07-26",
+    "emisor": {
+      "nombre": "Industrias KP S.L.",
+      "nif": "H03845294"
+    },
+    "receptor": {
+      "nombre": "Rómulo Armengol Olivera",
+      "nif": "39374877G"
+    },
+    "lineas": [
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 1,
+        "precio_unitario": 29.26,
+        "importe": 29.26
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 3,
+        "precio_unitario": 22.74,
+        "importe": 68.22
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 4072,
+        "precio_unitario": 0.08,
+        "importe": 325.76
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 3,
+        "precio_unitario": 564.22,
+        "importe": 1692.66
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 10,
+        "precio_unitario": 86.08,
+        "importe": 860.8
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 1,
+        "precio_unitario": 192.55,
+        "importe": 192.55
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 5,
+        "precio_unitario": 650.17,
+        "importe": 3250.85
+      }
+    ],
+    "base_imponible": 6420.1,
+    "tipo_iva": 21.0,
+    "cuota_iva": 1348.22,
+    "retencion_irpf": null,
+    "total": 7768.32
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

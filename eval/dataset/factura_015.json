@@ -1,0 +1,56 @@
+{
+  "datos": {
+    "numero": "F2026-0015",
+    "fecha_emision": "2026-07-03",
+    "emisor": {
+      "nombre": "Despacho Avanzadas S.L.N.E",
+      "nif": "F1067819A"
+    },
+    "receptor": {
+      "nombre": "Roque Rodríguez Gilabert",
+      "nif": "10382599P"
+    },
+    "lineas": [
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 20,
+        "precio_unitario": 962.02,
+        "importe": 19240.4
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 1,
+        "precio_unitario": 77.97,
+        "importe": 77.97
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 1721,
+        "precio_unitario": 0.12,
+        "importe": 206.52
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 2,
+        "precio_unitario": 18.9,
+        "importe": 37.8
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 5,
+        "precio_unitario": 60.06,
+        "importe": 300.3
+      }
+    ],
+    "base_imponible": 19862.99,
+    "tipo_iva": 21.0,
+    "cuota_iva": 4171.23,
+    "retencion_irpf": 2979.45,
+    "total": 21054.77
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

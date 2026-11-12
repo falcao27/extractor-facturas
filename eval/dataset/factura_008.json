@@ -1,0 +1,86 @@
+{
+  "datos": {
+    "numero": "F2026-0008",
+    "fecha_emision": "2026-02-02",
+    "emisor": {
+      "nombre": "Suministros Torrecilla & Asociados S.A.",
+      "nif": "E56308166"
+    },
+    "receptor": {
+      "nombre": "Comercial Castellana S.L.",
+      "nif": "E48552442"
+    },
+    "lineas": [
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 20,
+        "precio_unitario": 3.72,
+        "importe": 74.4
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 5,
+        "precio_unitario": 11.86,
+        "importe": 59.3
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 1,
+        "precio_unitario": 107.41,
+        "importe": 107.41
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 1,
+        "precio_unitario": 1964.78,
+        "importe": 1964.78
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 2,
+        "precio_unitario": 328.39,
+        "importe": 656.78
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 2,
+        "precio_unitario": 824.09,
+        "importe": 1648.18
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 12,
+        "precio_unitario": 58.22,
+        "importe": 698.64
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 3,
+        "precio_unitario": 912.95,
+        "importe": 2738.85
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 10,
+        "precio_unitario": 159.53,
+        "importe": 1595.3
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 20,
+        "precio_unitario": 321.0,
+        "importe": 6420.0
+      }
+    ],
+    "base_imponible": 15963.64,
+    "tipo_iva": 21.0,
+    "cuota_iva": 3352.36,
+    "retencion_irpf": null,
+    "total": 19316.0
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

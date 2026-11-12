@@ -1,0 +1,80 @@
+{
+  "datos": {
+    "numero": "2026/025",
+    "fecha_emision": "2026-04-19",
+    "emisor": {
+      "nombre": "Hnos Mora S.Coop.",
+      "nif": "B41834334"
+    },
+    "receptor": {
+      "nombre": "Familia Granados S.L.N.E",
+      "nif": "V8578067D"
+    },
+    "lineas": [
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 4973,
+        "precio_unitario": 0.14,
+        "importe": 696.22
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 20,
+        "precio_unitario": 150.21,
+        "importe": 3004.2
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 20,
+        "precio_unitario": 57.26,
+        "importe": 1145.2
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 12,
+        "precio_unitario": 29.79,
+        "importe": 357.48
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 2,
+        "precio_unitario": 1969.16,
+        "importe": 3938.32
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 1,
+        "precio_unitario": 1106.93,
+        "importe": 1106.93
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 1,
+        "precio_unitario": 14.2,
+        "importe": 14.2
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 2,
+        "precio_unitario": 266.71,
+        "importe": 533.42
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 1,
+        "precio_unitario": 612.19,
+        "importe": 612.19
+      }
+    ],
+    "base_imponible": 11408.16,
+    "tipo_iva": 10.0,
+    "cuota_iva": 1140.82,
+    "retencion_irpf": null,
+    "total": 12548.98
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

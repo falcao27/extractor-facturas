@@ -1,0 +1,32 @@
+{
+  "datos": {
+    "numero": "F2026-0021",
+    "fecha_emision": "2026-08-22",
+    "emisor": {
+      "nombre": "Servicios Ibéricos S.Com.",
+      "nif": "D63624480"
+    },
+    "receptor": {
+      "nombre": "Flor Sáenz-Núñez",
+      "nif": "90039961K"
+    },
+    "lineas": [
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 20,
+        "precio_unitario": 275.61,
+        "importe": 5512.2
+      }
+    ],
+    "base_imponible": 5512.2,
+    "tipo_iva": 21.0,
+    "cuota_iva": 1157.56,
+    "retencion_irpf": 826.83,
+    "total": 5842.93
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": true,
+    "trampa": null
+  }
+}

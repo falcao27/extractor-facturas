@@ -1,0 +1,62 @@
+{
+  "datos": {
+    "numero": "F2026-0029",
+    "fecha_emision": "2026-09-01",
+    "emisor": {
+      "nombre": "Tecnologías RKH S.L.L.",
+      "nif": "R5162588G"
+    },
+    "receptor": {
+      "nombre": "Moliner y Torrents S.L.N.E",
+      "nif": "S3820247I"
+    },
+    "lineas": [
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 20,
+        "precio_unitario": 86.8,
+        "importe": 1736.0
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 20,
+        "precio_unitario": 554.54,
+        "importe": 11090.8
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 10,
+        "precio_unitario": 359.74,
+        "importe": 3597.4
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 5,
+        "precio_unitario": 37.79,
+        "importe": 188.95
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 3,
+        "precio_unitario": 285.61,
+        "importe": 856.83
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 3829,
+        "precio_unitario": 0.11,
+        "importe": 421.19
+      }
+    ],
+    "base_imponible": 17891.17,
+    "tipo_iva": 10.0,
+    "cuota_iva": 1789.12,
+    "retencion_irpf": null,
+    "total": 19680.29
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "datos": {
+    "numero": "FAC-00017",
+    "fecha_emision": "2026-07-24",
+    "emisor": {
+      "nombre": "Suministros Torralba & Asociados S.Com.",
+      "nif": "Q4589475E"
+    },
+    "receptor": {
+      "nombre": "Paloma Dalmau Solsona",
+      "nif": "70676001Z"
+    },
+    "lineas": [
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 20,
+        "precio_unitario": 191.89,
+        "importe": 3837.8
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 3,
+        "precio_unitario": 87.57,
+        "importe": 262.71
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 12,
+        "precio_unitario": 185.04,
+        "importe": 2220.48
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 5,
+        "precio_unitario": 61.6,
+        "importe": 308.0
+      }
+    ],
+    "base_imponible": 6628.99,
+    "tipo_iva": 10.0,
+    "cuota_iva": 662.9,
+    "retencion_irpf": 994.35,
+    "total": 6297.54
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

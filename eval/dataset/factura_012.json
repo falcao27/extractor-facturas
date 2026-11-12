@@ -1,0 +1,74 @@
+{
+  "datos": {
+    "numero": "F2026-0012",
+    "fecha_emision": "2026-02-11",
+    "emisor": {
+      "nombre": "Inmobiliaria Iberia S.L.",
+      "nif": "C69370120"
+    },
+    "receptor": {
+      "nombre": "Restauración SL S.L.L.",
+      "nif": "S2195903F"
+    },
+    "lineas": [
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 3,
+        "precio_unitario": 656.05,
+        "importe": 1968.15
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 1,
+        "precio_unitario": 81.14,
+        "importe": 81.14
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 1,
+        "precio_unitario": 72.13,
+        "importe": 72.13
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 2,
+        "precio_unitario": 256.88,
+        "importe": 513.76
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 1,
+        "precio_unitario": 1051.34,
+        "importe": 1051.34
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 1,
+        "precio_unitario": 90.77,
+        "importe": 90.77
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 12,
+        "precio_unitario": 118.36,
+        "importe": 1420.32
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 3,
+        "precio_unitario": 38.95,
+        "importe": 116.85
+      }
+    ],
+    "base_imponible": 5314.46,
+    "tipo_iva": 4.0,
+    "cuota_iva": 212.58,
+    "retencion_irpf": null,
+    "total": 5527.04
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

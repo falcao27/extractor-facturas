@@ -1,0 +1,32 @@
+{
+  "datos": {
+    "numero": "2026/024",
+    "fecha_emision": "2026-06-02",
+    "emisor": {
+      "nombre": "Calisto Guillen Lamas S.L.",
+      "nif": "Q1425290B"
+    },
+    "receptor": {
+      "nombre": "Nadia Figuerola-Rodríguez",
+      "nif": "55327092V"
+    },
+    "lineas": [
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 12,
+        "precio_unitario": 33.85,
+        "importe": 406.2
+      }
+    ],
+    "base_imponible": 406.2,
+    "tipo_iva": 4.0,
+    "cuota_iva": 16.25,
+    "retencion_irpf": null,
+    "total": 422.45
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": true,
+    "trampa": null
+  }
+}

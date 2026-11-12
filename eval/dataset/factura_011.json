@@ -1,0 +1,44 @@
+{
+  "datos": {
+    "numero": "2026/011",
+    "fecha_emision": "2026-05-27",
+    "emisor": {
+      "nombre": "Banco Peiró S.Coop.",
+      "nif": "G95037780"
+    },
+    "receptor": {
+      "nombre": "Suministros Castell S.A.",
+      "nif": "B88148267"
+    },
+    "lineas": [
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 20,
+        "precio_unitario": 170.34,
+        "importe": 3406.8
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 1,
+        "precio_unitario": 91.16,
+        "importe": 91.16
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 12,
+        "precio_unitario": 54.59,
+        "importe": 655.08
+      }
+    ],
+    "base_imponible": 4153.04,
+    "tipo_iva": 21.0,
+    "cuota_iva": 872.14,
+    "retencion_irpf": null,
+    "total": 5025.18
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": "nif"
+  }
+}

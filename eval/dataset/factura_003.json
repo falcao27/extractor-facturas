@@ -1,0 +1,74 @@
+{
+  "datos": {
+    "numero": "FAC-00003",
+    "fecha_emision": "2026-02-06",
+    "emisor": {
+      "nombre": "Hotel Morata & Asociados S.A.T.",
+      "nif": "Q5030891E"
+    },
+    "receptor": {
+      "nombre": "Hermanos Quero S.C.P",
+      "nif": "V0576276J"
+    },
+    "lineas": [
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 1,
+        "precio_unitario": 1173.12,
+        "importe": 1173.12
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 1,
+        "precio_unitario": 188.01,
+        "importe": 188.01
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 10,
+        "precio_unitario": 163.36,
+        "importe": 1633.6
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 1069,
+        "precio_unitario": 0.08,
+        "importe": 85.52
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 5,
+        "precio_unitario": 395.27,
+        "importe": 1976.35
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 1,
+        "precio_unitario": 201.64,
+        "importe": 201.64
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 10,
+        "precio_unitario": 660.25,
+        "importe": 6602.5
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 3,
+        "precio_unitario": 27.8,
+        "importe": 83.4
+      }
+    ],
+    "base_imponible": 11944.14,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2508.27,
+    "retencion_irpf": null,
+    "total": 14452.41
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

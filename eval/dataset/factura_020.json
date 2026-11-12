@@ -1,0 +1,68 @@
+{
+  "datos": {
+    "numero": "F2026-0020",
+    "fecha_emision": "2026-06-08",
+    "emisor": {
+      "nombre": "Logística Higueras & Asociados S.C.P",
+      "nif": "A52221975"
+    },
+    "receptor": {
+      "nombre": "Jose Francisco Sobrino Pinilla S.Com.",
+      "nif": "P8874667B"
+    },
+    "lineas": [
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 12,
+        "precio_unitario": 183.85,
+        "importe": 2206.2
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 5,
+        "precio_unitario": 787.29,
+        "importe": 3936.45
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 5,
+        "precio_unitario": 55.78,
+        "importe": 278.9
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 10,
+        "precio_unitario": 166.25,
+        "importe": 1662.5
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 3,
+        "precio_unitario": 1217.88,
+        "importe": 3653.64
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 1890,
+        "precio_unitario": 0.13,
+        "importe": 245.7
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 10,
+        "precio_unitario": 220.04,
+        "importe": 2200.4
+      }
+    ],
+    "base_imponible": 14183.79,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2978.6,
+    "retencion_irpf": null,
+    "total": 17162.39
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

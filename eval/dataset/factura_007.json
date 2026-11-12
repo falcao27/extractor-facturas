@@ -1,0 +1,38 @@
+{
+  "datos": {
+    "numero": "F2026-0007",
+    "fecha_emision": "2026-10-04",
+    "emisor": {
+      "nombre": "Comercial LPF S.A.",
+      "nif": "B09311020"
+    },
+    "receptor": {
+      "nombre": "Enrique Roca Español S.C.P",
+      "nif": "G38261061"
+    },
+    "lineas": [
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 5,
+        "precio_unitario": 217.54,
+        "importe": 1087.7
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 3,
+        "precio_unitario": 352.84,
+        "importe": 1058.52
+      }
+    ],
+    "base_imponible": 2146.22,
+    "tipo_iva": 4.0,
+    "cuota_iva": 85.85,
+    "retencion_irpf": null,
+    "total": 2232.07
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": "nif"
+  }
+}

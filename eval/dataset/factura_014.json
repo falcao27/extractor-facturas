@@ -1,0 +1,74 @@
+{
+  "datos": {
+    "numero": "2026/014",
+    "fecha_emision": "2026-05-22",
+    "emisor": {
+      "nombre": "Hermanos Madrid S.A.T.",
+      "nif": "W2026737C"
+    },
+    "receptor": {
+      "nombre": "Sola y asociados S.Com.",
+      "nif": "A85728277"
+    },
+    "lineas": [
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 5,
+        "precio_unitario": 811.68,
+        "importe": 4058.4
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 1,
+        "precio_unitario": 181.91,
+        "importe": 181.91
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 5,
+        "precio_unitario": 1131.76,
+        "importe": 5658.8
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 2,
+        "precio_unitario": 53.8,
+        "importe": 107.6
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 2,
+        "precio_unitario": 54.51,
+        "importe": 109.02
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 3,
+        "precio_unitario": 45.88,
+        "importe": 137.64
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 5,
+        "precio_unitario": 241.73,
+        "importe": 1208.65
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 1,
+        "precio_unitario": 219.22,
+        "importe": 219.22
+      }
+    ],
+    "base_imponible": 11681.24,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2453.06,
+    "retencion_irpf": null,
+    "total": 14134.3
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

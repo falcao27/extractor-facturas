@@ -1,0 +1,68 @@
+{
+  "datos": {
+    "numero": "2026/028",
+    "fecha_emision": "2026-05-05",
+    "emisor": {
+      "nombre": "Sarabia y Montserrat S.L.N.E",
+      "nif": "H19363878"
+    },
+    "receptor": {
+      "nombre": "Lucho del Guillen",
+      "nif": "66893606S"
+    },
+    "lineas": [
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 1,
+        "precio_unitario": 1093.64,
+        "importe": 1093.64
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 20,
+        "precio_unitario": 29.17,
+        "importe": 583.4
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 2,
+        "precio_unitario": 233.45,
+        "importe": 466.9
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 5,
+        "precio_unitario": 171.26,
+        "importe": 856.3
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 20,
+        "precio_unitario": 664.87,
+        "importe": 13297.4
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 2698,
+        "precio_unitario": 0.1,
+        "importe": 269.8
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 1,
+        "precio_unitario": 169.26,
+        "importe": 169.26
+      }
+    ],
+    "base_imponible": 16736.7,
+    "tipo_iva": 21.0,
+    "cuota_iva": 3514.71,
+    "retencion_irpf": null,
+    "total": 20251.41
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

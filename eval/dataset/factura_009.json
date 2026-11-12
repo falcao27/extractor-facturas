@@ -1,0 +1,86 @@
+{
+  "datos": {
+    "numero": "FAC-00009",
+    "fecha_emision": "2026-06-23",
+    "emisor": {
+      "nombre": "Julián & Asociados S.L.",
+      "nif": "G58341132"
+    },
+    "receptor": {
+      "nombre": "Dafne Lara Priego",
+      "nif": "16939707T"
+    },
+    "lineas": [
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 1,
+        "precio_unitario": 102.72,
+        "importe": 102.72
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 1,
+        "precio_unitario": 91.93,
+        "importe": 91.93
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 10,
+        "precio_unitario": 43.9,
+        "importe": 439.0
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 5,
+        "precio_unitario": 294.07,
+        "importe": 1470.35
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 2,
+        "precio_unitario": 311.47,
+        "importe": 622.94
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 20,
+        "precio_unitario": 22.15,
+        "importe": 443.0
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 12,
+        "precio_unitario": 704.66,
+        "importe": 8455.92
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 12,
+        "precio_unitario": 61.89,
+        "importe": 742.68
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 20,
+        "precio_unitario": 265.96,
+        "importe": 5319.2
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 1,
+        "precio_unitario": 43.33,
+        "importe": 43.33
+      }
+    ],
+    "base_imponible": 17731.07,
+    "tipo_iva": 21.0,
+    "cuota_iva": 3723.52,
+    "retencion_irpf": null,
+    "total": 21454.59
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "datos": {
+    "numero": "FAC-00001",
+    "fecha_emision": "2026-01-14",
+    "emisor": {
+      "nombre": "Banca Privada OLMJ S.L.N.E",
+      "nif": "J4107124B"
+    },
+    "receptor": {
+      "nombre": "Suministros BL S.Coop.",
+      "nif": "Q6753782I"
+    },
+    "lineas": [
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 12,
+        "precio_unitario": 11.59,
+        "importe": 139.08
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 3,
+        "precio_unitario": 50.94,
+        "importe": 152.82
+      }
+    ],
+    "base_imponible": 291.9,
+    "tipo_iva": 4.0,
+    "cuota_iva": 11.68,
+    "retencion_irpf": null,
+    "total": 303.58
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": true,
+    "trampa": null
+  }
+}

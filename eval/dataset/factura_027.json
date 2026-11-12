@@ -1,0 +1,86 @@
+{
+  "datos": {
+    "numero": "2026/027",
+    "fecha_emision": "2026-07-09",
+    "emisor": {
+      "nombre": "Talleres HI S.L.N.E",
+      "nif": "A66592312"
+    },
+    "receptor": {
+      "nombre": "José Manuel Patricio Llano Ribes",
+      "nif": "89484390S"
+    },
+    "lineas": [
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 20,
+        "precio_unitario": 303.83,
+        "importe": 6076.6
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 2,
+        "precio_unitario": 25.42,
+        "importe": 50.84
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 1438,
+        "precio_unitario": 0.13,
+        "importe": 186.94
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 5,
+        "precio_unitario": 429.72,
+        "importe": 2148.6
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 5,
+        "precio_unitario": 71.67,
+        "importe": 358.35
+      },
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 12,
+        "precio_unitario": 285.37,
+        "importe": 3424.44
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 1,
+        "precio_unitario": 269.47,
+        "importe": 269.47
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 3,
+        "precio_unitario": 65.89,
+        "importe": 197.67
+      },
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 1,
+        "precio_unitario": 747.17,
+        "importe": 747.17
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 1,
+        "precio_unitario": 27.36,
+        "importe": 27.36
+      }
+    ],
+    "base_imponible": 13487.44,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2832.36,
+    "retencion_irpf": null,
+    "total": 16319.8
+  },
+  "meta": {
+    "layout": 2,
+    "escaneada": false,
+    "trampa": null
+  }
+}

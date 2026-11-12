@@ -1,0 +1,56 @@
+{
+  "datos": {
+    "numero": "FAC-00026",
+    "fecha_emision": "2026-03-20",
+    "emisor": {
+      "nombre": "Hnos Borja S.Com.",
+      "nif": "U3207766A"
+    },
+    "receptor": {
+      "nombre": "Carmona y asociados S.L.N.E",
+      "nif": "W0855525B"
+    },
+    "lineas": [
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 5,
+        "precio_unitario": 258.73,
+        "importe": 1293.65
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 1,
+        "precio_unitario": 1598.44,
+        "importe": 1598.44
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 10,
+        "precio_unitario": 52.33,
+        "importe": 523.3
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 1,
+        "precio_unitario": 97.88,
+        "importe": 97.88
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 3,
+        "precio_unitario": 348.55,
+        "importe": 1045.65
+      }
+    ],
+    "base_imponible": 4558.92,
+    "tipo_iva": 10.0,
+    "cuota_iva": 455.89,
+    "retencion_irpf": 683.84,
+    "total": 4330.97
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

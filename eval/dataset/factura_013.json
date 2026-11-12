@@ -1,0 +1,62 @@
+{
+  "datos": {
+    "numero": "2026/013",
+    "fecha_emision": "2026-02-05",
+    "emisor": {
+      "nombre": "Rubio & Asociados S.Com.",
+      "nif": "S3128915J"
+    },
+    "receptor": {
+      "nombre": "Infraestructuras Castellana S.L.",
+      "nif": "F7058610B"
+    },
+    "lineas": [
+      {
+        "descripcion": "Diseño gráfico",
+        "cantidad": 3,
+        "precio_unitario": 652.29,
+        "importe": 1956.87
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 3,
+        "precio_unitario": 12.83,
+        "importe": 38.49
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 5,
+        "precio_unitario": 848.67,
+        "importe": 4243.35
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 1,
+        "precio_unitario": 71.25,
+        "importe": 71.25
+      },
+      {
+        "descripcion": "Alojamiento web",
+        "cantidad": 1,
+        "precio_unitario": 13.66,
+        "importe": 13.66
+      },
+      {
+        "descripcion": "Mantenimiento mensual",
+        "cantidad": 5,
+        "precio_unitario": 122.39,
+        "importe": 611.95
+      }
+    ],
+    "base_imponible": 6935.57,
+    "tipo_iva": 4.0,
+    "cuota_iva": 277.42,
+    "retencion_irpf": null,
+    "total": 7212.99
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "datos": {
+    "numero": "2026/005",
+    "fecha_emision": "2026-10-26",
+    "emisor": {
+      "nombre": "Meléndez & Asociados S.A.",
+      "nif": "A72288491"
+    },
+    "receptor": {
+      "nombre": "Ani Boada-Torre",
+      "nif": "12475714P"
+    },
+    "lineas": [
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 20,
+        "precio_unitario": 126.1,
+        "importe": 2522.0
+      },
+      {
+        "descripcion": "Reparación de equipo",
+        "cantidad": 20,
+        "precio_unitario": 74.29,
+        "importe": 1485.8
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 3,
+        "precio_unitario": 1193.99,
+        "importe": 3581.97
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 5,
+        "precio_unitario": 947.01,
+        "importe": 4735.05
+      }
+    ],
+    "base_imponible": 12324.82,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2588.21,
+    "retencion_irpf": null,
+    "total": 14913.03
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}

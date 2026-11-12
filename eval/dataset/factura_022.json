@@ -1,0 +1,74 @@
+{
+  "datos": {
+    "numero": "FAC-00022",
+    "fecha_emision": "2026-08-17",
+    "emisor": {
+      "nombre": "Inversiones Alcalá S.L.",
+      "nif": "G45777109"
+    },
+    "receptor": {
+      "nombre": "Inmobiliaria Arroyo S.L.N.E",
+      "nif": "J6367070G"
+    },
+    "lineas": [
+      {
+        "descripcion": "Servicio de transporte",
+        "cantidad": 3,
+        "precio_unitario": 86.89,
+        "importe": 260.67
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 545,
+        "precio_unitario": 0.14,
+        "importe": 76.3
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 12,
+        "precio_unitario": 49.7,
+        "importe": 596.4
+      },
+      {
+        "descripcion": "Traducción de documentos",
+        "cantidad": 4743,
+        "precio_unitario": 0.11,
+        "importe": 521.73
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 3,
+        "precio_unitario": 1117.47,
+        "importe": 3352.41
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 20,
+        "precio_unitario": 42.0,
+        "importe": 840.0
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 10,
+        "precio_unitario": 1920.06,
+        "importe": 19200.6
+      },
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 12,
+        "precio_unitario": 1728.91,
+        "importe": 20746.92
+      }
+    ],
+    "base_imponible": 45595.03,
+    "tipo_iva": 10.0,
+    "cuota_iva": 4559.5,
+    "retencion_irpf": 6839.25,
+    "total": 43315.28
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": null
+  }
+}

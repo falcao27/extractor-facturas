@@ -1,0 +1,50 @@
+{
+  "datos": {
+    "numero": "FAC-00010",
+    "fecha_emision": "2026-01-08",
+    "emisor": {
+      "nombre": "Hermanos Calleja S.L.N.E",
+      "nif": "J8176310D"
+    },
+    "receptor": {
+      "nombre": "Infraestructuras Carlos S.L.N.E",
+      "nif": "W4044587F"
+    },
+    "lineas": [
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 20,
+        "precio_unitario": 340.18,
+        "importe": 6803.6
+      },
+      {
+        "descripcion": "Licencia anual",
+        "cantidad": 5,
+        "precio_unitario": 855.15,
+        "importe": 4275.75
+      },
+      {
+        "descripcion": "Desarrollo de software",
+        "cantidad": 20,
+        "precio_unitario": 102.72,
+        "importe": 2054.4
+      },
+      {
+        "descripcion": "Formación presencial",
+        "cantidad": 1,
+        "precio_unitario": 250.59,
+        "importe": 250.59
+      }
+    ],
+    "base_imponible": 13384.34,
+    "tipo_iva": 21.0,
+    "cuota_iva": 2810.71,
+    "retencion_irpf": 2007.65,
+    "total": 14197.4
+  },
+  "meta": {
+    "layout": 0,
+    "escaneada": false,
+    "trampa": "total"
+  }
+}

@@ -1,0 +1,98 @@
+import io
+
+from openpyxl import load_workbook
+
+from app import main
+
+
+def subir(client, contenido: bytes, nombre="factura.pdf", tipo="application/pdf"):
+    return client.post("/facturas", files={"archivo": (nombre, contenido, tipo)})
+
+
+def test_subir_factura(client, pdf_bytes):
+    r = subir(client, pdf_bytes)
+    assert r.status_code == 201, r.text
+    body = r.json()
+    assert body["estado"] == "procesada"
+    assert body["avisos"] == []
+    assert body["datos"]["emisor"]["nif"] == "B12345674"
+    assert body["datos"]["lineas"][0]["importe"] == 500.0
+    assert body["tokens_entrada"] == 1200
+    assert body["escaneada"] is False
+    assert "F2026-0001" in client.extract_calls[0].texto
+
+
+def test_rechaza_no_pdf(client):
+    r = subir(client, b"hola", nombre="nota.txt", tipo="text/plain")
+    assert r.status_code == 422
+    assert "PDF" in r.json()["detail"]
+
+
+def test_rechaza_pdf_falso(client):
+    assert subir(client, b"no soy un pdf").status_code == 422
+
+
+def test_rechaza_archivo_grande(client, monkeypatch):
+    monkeypatch.setattr(main.settings, "max_upload_mb", 1)
+    r = subir(client, b"%PDF" + b"0" * (1024 * 1024))
+    assert r.status_code == 422
+    assert "1 MB" in r.json()["detail"]
+
+
+def test_limite_por_ip(client, pdf_bytes, monkeypatch):
+    monkeypatch.setattr(main.rate_limiter, "limit", 2)
+    assert subir(client, pdf_bytes).status_code == 201
+    assert subir(client, pdf_bytes).status_code == 201
+    assert subir(client, pdf_bytes).status_code == 429
+
+
+def test_listar_y_filtrar(client, pdf_bytes):
+    subir(client, pdf_bytes)
+    subir(client, pdf_bytes)
+    r = client.get("/facturas", params={"emisor": "consultora", "size": 1})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["total"] == 2 and len(body["items"]) == 1
+    assert client.get("/facturas", params={"emisor": "otra"}).json()["total"] == 0
+    assert client.get("/facturas", params={"desde": "2026-04-01"}).json()["total"] == 0
+    assert client.get("/facturas", params={"hasta": "2026-03-31"}).json()["total"] == 2
+
+
+def test_detalle_y_404(client, pdf_bytes):
+    fid = subir(client, pdf_bytes).json()["id"]
+    assert client.get(f"/facturas/{fid}").json()["id"] == fid
+    assert client.get("/facturas/999").status_code == 404
+
+
+def test_patch_revalida_y_confirma(client, pdf_bytes):
+    fid = subir(client, pdf_bytes).json()["id"]
+
+    r = client.patch(f"/facturas/{fid}", json={"total": 800.0})
+    assert r.status_code == 200
+    assert r.json()["estado"] == "con_avisos"
+    assert [a["campo"] for a in r.json()["avisos"]] == ["total"]
+
+    r = client.patch(f"/facturas/{fid}", json={"total": 795.0, "confirmar": True})
+    assert r.json()["estado"] == "revisada"
+    assert r.json()["avisos"] == []
+    assert len(r.json()["datos"]["lineas"]) == 2
+
+
+def test_patch_invalido(client, pdf_bytes):
+    fid = subir(client, pdf_bytes).json()["id"]
+    r = client.patch(f"/facturas/{fid}", json={"fecha_emision": "no-es-fecha"})
+    assert r.status_code == 422
+
+
+def test_exportar_excel(client, pdf_bytes):
+    subir(client, pdf_bytes)
+    r = client.get("/facturas/export.xlsx")
+    assert r.status_code == 200
+    wb = load_workbook(io.BytesIO(r.content))
+    assert wb.sheetnames == ["Facturas", "Líneas"]
+    ws = wb["Facturas"]
+    assert ws["B2"].value == "F2026-0001"
+    assert ws["A1"].font.bold
+    assert ws["C2"].number_format == "DD/MM/YYYY"
+    assert "€" in ws["L2"].number_format
+    assert wb["Líneas"].max_row == 3

@@ -1,0 +1,50 @@
+{
+  "datos": {
+    "numero": "F2026-0002",
+    "fecha_emision": "2026-07-03",
+    "emisor": {
+      "nombre": "Hnos Casanovas S.L.N.E",
+      "nif": "Q0475371A"
+    },
+    "receptor": {
+      "nombre": "Bermúdez y Marcos S.L.L.",
+      "nif": "W8799726H"
+    },
+    "lineas": [
+      {
+        "descripcion": "Auditoría contable",
+        "cantidad": 5,
+        "precio_unitario": 1695.09,
+        "importe": 8475.45
+      },
+      {
+        "descripcion": "Horas de consultoría",
+        "cantidad": 2,
+        "precio_unitario": 78.4,
+        "importe": 156.8
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 5,
+        "precio_unitario": 8.75,
+        "importe": 43.75
+      },
+      {
+        "descripcion": "Material de oficina",
+        "cantidad": 1,
+        "precio_unitario": 6.43,
+        "importe": 6.43
+      }
+    ],
+    "base_imponible": 8682.43,
+    "tipo_iva": 10.0,
+    "cuota_iva": 868.24,
+    "retencion_irpf": null,
+    "total": 9550.67
+  },
+  "meta": {
+    "layout": 1,
+    "escaneada": false,
+    "trampa": null
+  }
+}
